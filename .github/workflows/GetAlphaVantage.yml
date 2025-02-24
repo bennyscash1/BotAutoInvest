@@ -13,10 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 6.0
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x' # Change if needed
+          dotnet-version: '6.0.x' # Ensures .NET 6.0 is installed
 
       - name: Restore Dependencies
         run: dotnet restore
