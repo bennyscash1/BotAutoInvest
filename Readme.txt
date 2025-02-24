@@ -8,6 +8,10 @@ allure generate allure-results --clean -o allure-report
 to run browser>:
 allure serve allure-results 
 
+Api test:
+dotnet test --filter "Category=Level_1"
+
+
 
 Mobile:
 Open any app in your mobile once it with adb and run>:
