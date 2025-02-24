@@ -16,6 +16,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
         public async Task _GetAndReportAlphaVantageData()
         {
             #region Read the compnay list file
+            Console.WriteLine( "Test start!!!!!!!!!!!!");
             InfraFileService infraFileService = new InfraFileService();
             string currentPath = Directory.GetCurrentDirectory();
             string indexXlsxPath = Path.Combine(currentPath, "GeneralFiles", "CompanyNames.csv");
