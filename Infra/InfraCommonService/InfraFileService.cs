@@ -160,8 +160,10 @@ namespace InvesAuto.Infra.InfraCommonService
         }
         public int GetCsvRowsIntValue(string csvPath, string column = "A")
         {
+            Console.WriteLine("GetCsvRowsIntValue");
             if (!File.Exists(csvPath))
             {
+                Console.WriteLine("CSV file not found.");
                 throw new FileNotFoundException("CSV file not found.");
             }
 

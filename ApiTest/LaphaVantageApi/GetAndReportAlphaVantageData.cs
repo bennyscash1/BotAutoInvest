@@ -23,6 +23,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
             Console.WriteLine("The company files being load");
             string indexClumn = "A";
             int companyIndextCounter = infraFileService.GetCsvRowsIntValue(indexXlsxPath, indexClumn);
+            Console.WriteLine($"The company counter list is: {companyIndextCounter}");
             int runingAttamp = 1;
             #endregion
 
