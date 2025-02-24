@@ -20,8 +20,8 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
             InfraFileService infraFileService = new InfraFileService();
             string currentPath = Directory.GetCurrentDirectory();
             string indexXlsxPath = Path.Combine(currentPath, "GeneralFiles", "CompanyNames.csv");
-            Console.WriteLine("The company files being load");
             string indexClumn = "A";
+            Console.WriteLine("The company files being load !!");
             int companyIndextCounter = infraFileService.GetCsvRowsIntValue(indexXlsxPath, indexClumn);
             Console.WriteLine($"The company counter list is: {companyIndextCounter}");
             int runingAttamp = 1;
