@@ -19,7 +19,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
             InfraFileService infraFileService = new InfraFileService();
             string currentPath = Directory.GetCurrentDirectory();
             string indexXlsxPath = Path.Combine(currentPath, "GeneralFiles", "CompanyNames.csv");
-
+            Console.WriteLine("The company files being load");
             string indexClumn = "A";
             int companyIndextCounter = infraFileService.GetCsvRowsIntValue(indexXlsxPath, indexClumn);
             int runingAttamp = 1;
@@ -29,7 +29,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
             {
                 #region Get the company name and send the api request to alpha vantage
                 string companyNameCsv = infraFileService.GetCsvValue(indexXlsxPath, $"{indexClumn}{runingAttamp}");
-
+                Console.WriteLine( $"The company: {companyNameCsv} has being load and run");
                 string finvizUtl = $"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={companyNameCsv}&apikey=D7MHCVHXPK2H37CO";
                 SetUpBaseUrl(finvizUtl);
                 var responseUserProfile = await HttpService
@@ -60,6 +60,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
                 DateTime israelTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, israelTimeZone);
 
                 string reportFilePath = Path.Combine(currentPath, "GeneralFiles", "AlphaVantage", $"{companyNameCsv}.csv");
+                Console.WriteLine( "Report to alpha vantage has open");
                 Dictionary<string, string> reportData = new Dictionary<string, string>
                 {
                     { "Date", $"{israelTime}" },
@@ -72,6 +73,7 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
                 bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
                 #endregion
                 runingAttamp++;
+                Console.WriteLine( "The test while as being end!!!");
             }
 
         }
