@@ -44,17 +44,19 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="GeneralFiles\BBAI.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Infra\EnvFiles\jsonData.dev.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Infra\EnvFiles\jsonData.qa.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="GeneralFiles\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Update="Infra\EnvFiles\jsonData.dev.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Update="Infra\EnvFiles\jsonData.qa.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
   <ItemGroup>
     <None Remove="C:\Users\benis\.nuget\packages\autoitx.dotnet\3.3.14.5\build\AutoItX3.dll" />
