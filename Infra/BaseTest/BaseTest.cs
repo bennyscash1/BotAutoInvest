@@ -1,28 +1,12 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Formats.Asn1;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Reflection;
+﻿using InvesAuto.Infra.BaseTest;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-using OpenQA.Selenium.Appium.Mac;
-using OpenQA.Selenium;
-using InvesAuto.Infra.BaseTest;
 
 namespace InvestAuto.Infra.BaseTest
 {
     public class BaseTest : Base
     {
-   
+
         #region Generate uniq key 
         internal static readonly char[] chars =
          "1234567890".ToCharArray();
