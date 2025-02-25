@@ -1,5 +1,6 @@
 ﻿using ComprehensivePlayrightAuto.ApiTest.HttpService;
 using InvesAuto.ApiTest.HttpService;
+using InvesAuto.Infra.DbService;
 using InvesAuto.Infra.InfraCommonService;
 using InvestAuto.Test.ExternalApiTests.GenerateApiUserTokenTest;
 using NUnit.Framework;
@@ -73,8 +74,9 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
                     { "volume", $"{volume}" },
                     { "time", $"{time}" }
                 };
-
-                bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
+                MongoDbService mongoDbService = new MongoDbService();
+                await mongoDbService.InsertOrUpdateDicteneryData(companyNameCsv, reportData);
+                //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
                 #endregion
                 runingAttamp++;
                 Console.WriteLine( "The test while as being end!!!");
