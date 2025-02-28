@@ -2,7 +2,7 @@ name: Run NUnit Tests Every 4 Hours
 
 on:
   schedule:
-    - cron: "0 */8 * * *" # Runs every 8 hours
+    - cron: "0 */12 * * *" # Runs every 8 hours
   workflow_dispatch: # Allows manual triggering
 
 jobs:
