@@ -18,6 +18,9 @@ namespace InvesAuto.ApiTest.AIRequests.SendMongoDbToAi
         [Test]
         public async Task _GetDbSchemaByStockName()
         {
+            OpenAiService openAiService = new OpenAiService();
+            string aiAnalyticsRespones = await openAiService.OpenAiServiceRequest("ai you",
+                OpenAiService.AiRequestType.DataBaseAnalyst);
             // Get the schema from the database
             #region Get company name from the file
             InfraFileService infraFileService = new InfraFileService();
@@ -37,9 +40,9 @@ namespace InvesAuto.ApiTest.AIRequests.SendMongoDbToAi
             #endregion
 
             #region Send the schema to AI
-            OpenAiService openAiService = new OpenAiService();
+        /*    OpenAiService openAiService = new OpenAiService();
             string aiAnalyticsRespones = await openAiService.OpenAiServiceRequest(schemaByCompnayName,
-                OpenAiService.AiRequestType.DataBaseAnalyst);
+                OpenAiService.AiRequestType.DataBaseAnalyst);*/
             #endregion
         }
     }

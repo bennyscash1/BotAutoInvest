@@ -41,7 +41,7 @@ namespace InvesAuto.Infra.AiIntegrationService
                     break;
             }
 
-            string apiKey = GetTestData(configDataEnum.OpenAiToken);
+            string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
             string apiResponce = "An error occurred or no response was returned.";
             string combinedPrompt = $"{prePrompt}\n\n{userPrompts}";
             try
