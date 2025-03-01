@@ -1,0 +1,32 @@
+﻿{
+  "API": {
+    "Email": "aaa@gmail.com",
+    "Password": "123456",
+    "BaseApiUrl": "https://httpbin.org/",
+    "AlphaVantageToken": "D7MHCVHXPK2H37CO",
+    "OpenAiToken": "{}"
+
+
+  },
+  "WebUi": {
+    "WebUrl": "https://practicetestautomation.com/practice-test-login/",
+    "WebUserName": "student",
+    "WebPassword": "Password123"
+  },
+  "Mobile": {
+    "PlatformName": "android",
+    "deviceName": "bennys9",
+    "Udid": "43bd5a1b",
+    "appPackage": "com.google.android.contacts",
+    "appActivity": "com.android.contacts.activities.PeopleActivity"
+  },
+  "CommonData": {
+    "BuyerQuestionId": "c4e59cdf-7754-450b-be05-d73fda9d0283",
+    "CommonDataMerchantQuastionID1": "c4e59cdf-7754-450b-be05-d73fda9d0283",
+    "CommonDataMerchantQuastionID2": "b81df60b-8572-4f03-8d92-6a163486eda0",
+    "CommonDataMerchantQuastionID3": "ca904cf2-c283-49c3-9534-1af62432f739",
+    "BankBranchId": "3239",
+    "BankBranchIdMizrachi": "4492"
+  }
+}
+

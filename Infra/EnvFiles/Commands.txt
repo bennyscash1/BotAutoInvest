@@ -1,0 +1,49 @@
+﻿Detox for react native
+
+connect to sql >
+az login
+
+
+Allure report
+Clean before run>
+allure generate allure-results --clean -o allure-report
+Once the test done>>
+Navigate to \Safecash.Tests\SafeCash.Test.Api\bin\Debug\net6.0>
+cd C:\Bennys\Safecash\Repro\Safecash.Tests\SafeCash.Test.Api\bin\Debug\net6.0
+allure serve allure-results 
+
+Run test using PWS command>
+dotnet test ./SafeCash.Test.Api/SafeCash.Test.csproj --filter "Category={your categoty}" --settings ./SafeCash.Test.Api/EnvFiles/dev.runsettings
+cube ctl (restrat the jobs)
+kubectl --context SafeCash-Dev-AKS01 -n "safecash-dev" rollout restart deployment "safecash-dev-jobs-deployment"
+
+
+---------------
+
+Mobile test>
+Test name of app:
+adb shell dumpsys window | find "mCurrentFocus"
+Reset UiAutomator>>
+In case you have server side error try run the next commands>
+adb uninstall io.appium.uiautomator2.server
+adb uninstall io.appium.uiautomator2.server.test
+
+Run via wifi and not a cable>>
+Navigaet to usb debug and get the ip > then using cmd (while you in the same network)
+C:\Users\benis>adb connect 192.168.31.72:34695
+
+Devices uuid:
+poco device bfd406d21897
+redmi s9 43bd5a1b
+pax device 1760076871
+sumsond test R9PTC0MSYWE
+sumsong s21 R5CT4401Q1P
+
+adb commands:
+adb debives
+adb connect 10.80.1.151:41441
+
+
+docker
+docker build --rm -t automation-prod .
+docker run --rm automation-prod

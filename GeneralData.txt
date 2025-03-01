@@ -1,0 +1,11 @@
+1:
+Company get hard coded
+2:
+Each company have a csv file
+
+each file has rod return data (las open etx)
+each colum have date format and tha return api volum 
+
+
+alpha vantage token 
+D7MHCVHXPK2H37CO

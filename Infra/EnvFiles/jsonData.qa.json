@@ -1,0 +1,21 @@
+﻿{
+  "API": {
+    "Email": "eve.holt@reqres.in",
+    "Password": "pistol",
+    "BaseApiUrl": "https://reqres.in/",
+    "AlphaVantageToken": "D7MHCVHXPK2H37CO",
+    "OpenAiToken": "{}"
+  },
+  "WebUi": {
+    "WebUrl": "https://practicetestautomation.com/practice-test-login/",
+    "WebUserName": "student",
+    "WebPassword": "Password123"
+  },
+  "Mobile": {
+    "ContactName": "בני",
+    "ContactNumber": "0584102220",
+    "appPackage": "com.google.android.contacts",
+    "appActivity": "com.android.contacts.activities.PeopleActivity"
+  }
+}
+
