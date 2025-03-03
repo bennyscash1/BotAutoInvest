@@ -16,9 +16,10 @@ namespace InvesAuto.Infra.DbService
             Console.WriteLine("✅ UpdateMongoDb constructor called");
         }
 
-        public async Task InsertOrUpdateDicteneryDataToMongo(string stockSymbol, Dictionary<string, string> stockData)
+        public async Task InsertOrUpdateDicteneryDataToMongo(string stockSymbol, Dictionary<string, string> 
+            stockData, DataBaseCollection dataBaseCollection)
         {
-            var collection = _database.GetCollection<BsonDocument>("stocks"); // Now uses inherited _database
+            var collection = _database.GetCollection<BsonDocument>(dataBaseCollection.ToString()); // Now uses inherited _database
 
             var newEntry = new BsonDocument(stockData);
             var filter = Builders<BsonDocument>.Filter.Eq("symbol", stockSymbol);

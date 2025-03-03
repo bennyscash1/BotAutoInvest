@@ -1,4 +1,5 @@
 ﻿using InvesAuto.Infra.AiIntegrationService;
+using InvesAuto.Infra.DbService;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -20,26 +21,39 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get stock company names from AI
             OpenAiService openAiService = new OpenAiService();
-            string urlNews = "https://www.reuters.com/markets/us/";
-            string TopStockFromAI = await openAiService.OpenAiServiceRequest(urlNews,
-                OpenAiService.AiRequestType.GetStockCompanysPrompts);
+            string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";
+            string topStockFromGrokAI = await openAiService.GetGrokResponse(urlNews,
+               OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
+
+            string topStockFromAI = await openAiService.OpenAiServiceRequest(urlNews,
+                OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
             #endregion
 
-            Match stockCountMatch = Regex.Match(TopStockFromAI, @"found (\d+) stock");
-            int stockCompanySum = stockCountMatch.Success ? int.Parse(stockCountMatch.Groups[1].Value) : 0;
 
-            // Extract stock names
-            MatchCollection stockMatches = Regex.Matches(TopStockFromAI, @"\b([A-Z]+)\b");
+            // Regex pattern to match words after a number and a colon
+            string pattern = @"\d+:\s([A-Z]+)";
 
-            // Store values
-            string[] stockValues = stockMatches.Cast<Match>().Select(m => m.Value).ToArray();
+            // Find matches
+            MatchCollection matches = Regex.Matches(topStockFromAI, pattern);
 
-            // Print results
-            Console.WriteLine($"Stock Company Sum: {stockCompanySum}");
-            for (int i = 0; i < stockValues.Length; i++)
+            DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
+            UpdateMongoDb updateMongoDb = new UpdateMongoDb();
+            bool isHaveUpdatge = true;
+            #region Get stock company names from AI
+            foreach (Match match in matches)
             {
-                Console.WriteLine($"Stock Value {i + 1}: {stockValues[i]}");
+                Console.WriteLine(match.Groups[1].Value);
+                var x = match.Groups[1];
+                string symboleName = x.Value;
+
+                Dictionary<string, string> reportDataName = await dicteneryInfraService
+                    .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
+
+                await updateMongoDb
+                    .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName, 
+                    MongoDbInfra.DataBaseCollection.stockCompanyList);
             }
+            #endregion
         }
     }
 }

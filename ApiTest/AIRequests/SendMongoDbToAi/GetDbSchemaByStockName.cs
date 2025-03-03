@@ -49,7 +49,7 @@ namespace InvesAuto.ApiTest.AIRequests.SendMongoDbToAi
                 #region Send the schema to AI
                 OpenAiService openAiService = new OpenAiService();
                 string aiAnalyticsRespones = await openAiService.OpenAiServiceRequest(schemaByCompnayName,
-                    OpenAiService.AiRequestType.DataBaseAnalyst);
+                    OpenAiService.AiPrePromptType.DataBaseAnalyst);
                 #endregion
                 if (aiAnalyticsRespones!="2")
                 {

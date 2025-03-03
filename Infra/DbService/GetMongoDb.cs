@@ -25,10 +25,29 @@ namespace InvesAuto.Infra.DbService
     {
         private readonly IMongoCollection<GetMongoDbDTO> _collection;
 
-        public GetMongoDb()
+        public GetMongoDb(DataBaseCollection collectionName = DataBaseCollection.stockCompanyList) // Default
         {
-            _collection = _database.GetCollection<GetMongoDbDTO>("stocks");
+            _collection = _database.GetCollection<GetMongoDbDTO>(collectionName.ToString());
         }
+
+        public async Task<List<string>> GetStockListFromDB()
+        {
+            var filter = Builders<GetMongoDbDTO>.Filter.Empty; // Fetch all documents
+            var documents = await _collection.Find(filter).ToListAsync();
+            var symbols = new List<string>();
+
+            foreach (var doc in documents)
+            {
+                if (!string.IsNullOrEmpty(doc.symbol)) // Ensure symbol exists
+                {
+                    symbols.Add(doc.symbol);
+                }
+            }
+
+            return symbols; // Return List<string> instead of string
+        }
+
+
         public async Task<string> GetAllStocks()
         {
             var results = await _collection.Find(Builders<GetMongoDbDTO>.Filter.Empty).ToListAsync();

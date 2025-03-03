@@ -14,20 +14,26 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
         public async Task _GetAndReportYhaooFinance()
         {
-            #region initial Yahoo data
-            InfraFileService infraFileService = new InfraFileService();
+       /*     InfraFileService infraFileService = new InfraFileService();
             string currentPath = Directory.GetCurrentDirectory();
             string companyPahtFile = infraFileService.GetCompanyStockFilePath();
             string indexClumn = "A";
             int companyIndextCounter = infraFileService
-                .GetCsvRowsIntValue(companyPahtFile, indexClumn);
-            #endregion
-            #region run on the list
-            int runingAttamp = 1;
+                .GetCsvRowsIntValue(companyPahtFile, indexClumn);*/
 
-            while (runingAttamp <= companyIndextCounter)
+            #region Get symbol data from db
+            GetMongoDb getMongoDbDTO = new GetMongoDb(MongoDbInfra.DataBaseCollection.stockCompanyList);
+            var symbolList = await getMongoDbDTO
+                .GetStockListFromDB();
+            int dbStockCount = symbolList.Count();
+            #endregion
+
+            int runingAttamp = 0;
+
+            while (runingAttamp < dbStockCount)
             {
-                string companyNameCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
+                string companyNameCsv = symbolList[runingAttamp];
+                //string companyNameCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
 
                 var securities = await Yahoo.Symbols(companyNameCsv)
                 .Fields(
@@ -57,7 +63,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
                 #region Report the responce data     
                 DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
-                Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnSymbolDictionary(
+                Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnStockDataDictionary(
                      companyNameCsv,
                      price.ToString(),
                      volume.ToString(),
@@ -70,7 +76,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                  );
                 //Add it to the mongo db
                 UpdateMongoDb mongoDbService = new UpdateMongoDb();
-                await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportDataService);
+                await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportDataService , 
+                    MongoDbInfra.DataBaseCollection.stockData);
                 //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
                 runingAttamp++;
                 //Do not remove it (to not blcok)
@@ -78,7 +85,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 Console.WriteLine("The test while as being end!!!");
                 #endregion
             }
-            #endregion
         }
     }
 }

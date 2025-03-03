@@ -80,7 +80,8 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
                     { "RsiData", $"{RsiData}" }
                 };
                 UpdateMongoDb mongoDbService = new UpdateMongoDb();
-                await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportData);
+                await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportData, 
+                    MongoDbInfra.DataBaseCollection.stockData);
                 //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
                 runingAttamp++;
                 Console.WriteLine("The test while as being end!!!");
