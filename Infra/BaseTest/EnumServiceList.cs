@@ -80,7 +80,7 @@ namespace InvesAuto.Infra.BaseTest
         public static class Categories
         {
             //Test categoty
-            public const string GetAlphaVintageData = nameof(GetFinvizData);
+            public const string ApiStockDataGit = nameof(ApiStockDataGit);
             public const string AiIntegration = nameof(AiIntegration);
             public const string GetFinvizData = nameof(GetFinvizData);
             public const string UiWeb = nameof(UiWeb);

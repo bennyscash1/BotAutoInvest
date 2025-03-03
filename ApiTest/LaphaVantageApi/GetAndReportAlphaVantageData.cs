@@ -7,8 +7,7 @@ using static InvesAuto.Infra.BaseTest.EnumServiceList;
 
 namespace InvestAuto.ApiTest.LaphaVantageApi
 {
-    [TestFixture, Category(Categories.GetAlphaVintageData),
-    Category(TestLevel.Level_1)]
+
     public class GetAndReportAlphaVantageData : ApiInfraTest
     {
         [Test]
@@ -23,8 +22,9 @@ namespace InvestAuto.ApiTest.LaphaVantageApi
                 .GetCsvRowsIntValue(companyPahtFile, indexClumn);
 
             Console.WriteLine($"The company counter list is: {companyIndextCounter}");
-            int runingAttamp = 1;
             #endregion
+
+            int runingAttamp = 1;
 
             while (runingAttamp <= companyIndextCounter)
             {
