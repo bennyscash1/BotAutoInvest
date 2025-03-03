@@ -26,21 +26,45 @@ namespace InvesAuto.ApiTest.AIRequests.SendMongoDbToAi
             string indexClumn = "A";
             // runingAttamp shult be attamp using while loop
             int runingAttamp = 1;
+      
             int companyIndextCounter = infraFileService
                 .GetCsvRowsIntValue(companyPahtFile, indexClumn);
-            string companyNameFromCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
             #endregion
 
-            #region Get the schema from the database
-            GetMongoDb getMongoDbData = new GetMongoDb();
-            var schemaByCompnayName = await getMongoDbData
-                .GetStockDataBySymbol(companyNameFromCsv);
-            #endregion
+            #region Send the schema to AI for each stock company
+            while (runingAttamp <= companyIndextCounter)
+            {
+                string companyNameFromCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
+                #region Get the schema from the database
+                GetMongoDb getMongoDbData = new GetMongoDb();
+                var schemaByCompnayName = await getMongoDbData
+                    .GetStockDataBySymbol(companyNameFromCsv);
+                #endregion
 
-            #region Send the schema to AI
-            OpenAiService openAiService = new OpenAiService();
-            string aiAnalyticsRespones = await openAiService.OpenAiServiceRequest(schemaByCompnayName,
-                OpenAiService.AiRequestType.DataBaseAnalyst);
+                #region Send the DB to analytic code
+                int stockAnlyticksValue =await getMongoDbData
+                    .AnalyzeStockBySymbol(companyNameFromCsv);
+                #endregion
+
+                #region Send the schema to AI
+                OpenAiService openAiService = new OpenAiService();
+                string aiAnalyticsRespones = await openAiService.OpenAiServiceRequest(schemaByCompnayName,
+                    OpenAiService.AiRequestType.DataBaseAnalyst);
+                #endregion
+                if (aiAnalyticsRespones!="2")
+                {
+                    Console.WriteLine($"The company{companyNameFromCsv} It's worth looking at.");
+                    //send sms
+                   /* string currentPath = Directory.GetCurrentDirectory();
+                    string reportFilePath = Path.Combine(currentPath, "GeneralFiles", "AlphaVantage", $"{companyNameCsv}.csv");
+                    bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);*/
+                }
+                else
+                {
+                    Console.WriteLine("");
+                }
+                runingAttamp++;
+            }
             #endregion
         }
     }

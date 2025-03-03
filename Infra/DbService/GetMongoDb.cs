@@ -58,6 +58,37 @@ namespace InvesAuto.Infra.DbService
 
             return JsonConvert.SerializeObject(result, Formatting.Indented);
         }
+        public async Task<int> AnalyzeStockBySymbol(string symbol, int daysAhead = 2)
+        {
+            Console.WriteLine($"🔍 Fetching stock data for symbol: {symbol}...");
+
+            var filter = Builders<GetMongoDbDTO>.Filter.Eq(s => s.symbol, symbol);
+            var stocks = await _collection.Find(filter).Sort(Builders<GetMongoDbDTO>.Sort.Ascending(s => s.Date)).ToListAsync();
+
+            if (stocks.Count < daysAhead)
+            {
+                Console.WriteLine($"❌ Not enough data for prediction (need at least {daysAhead} entries).");
+                return 2; // Hold
+            }
+
+            // חישוב Future Return ל-X ימים קדימה
+            for (int i = 0; i < stocks.Count - daysAhead; i++)
+            {
+                double priceToday = Convert.ToDouble(stocks[i].price);
+                double priceFuture = Convert.ToDouble(stocks[i + daysAhead].price);
+                double futureReturn = ((priceFuture - priceToday) / priceToday) * 100;
+
+                Console.WriteLine($"📅 Date: {stocks[i].Date}, Price: {priceToday}, Future Price: {priceFuture}, Future Return: {futureReturn}%");
+
+                // החלטת קנייה/מכירה לפי הסף
+                if (futureReturn > 5)
+                    return 1; // Buy
+                if (futureReturn < -5)
+                    return 3; // Sell
+            }
+
+            return 2; // Hold (ברירת מחדל)
+        }
 
     }
 }
