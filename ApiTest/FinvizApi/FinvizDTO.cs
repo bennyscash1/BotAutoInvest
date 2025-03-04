@@ -19,4 +19,9 @@ namespace InvestAuto.Test.ExternalApiTests.GenerateApiUserTokenTest
     {
         public int page { get; set; }
     }
+    public class IsSymbolValidOutputDTO 
+    {
+        public string? currency { get; set; }
+        public string? error { get; set; }
+    }
 }

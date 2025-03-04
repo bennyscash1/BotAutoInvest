@@ -29,11 +29,13 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
             #endregion
 
             int runingAttamp = 0;
+            UpdateMongoDb mongoDbService = new UpdateMongoDb();
 
             while (runingAttamp < dbStockCount)
             {
-                string companyNameCsv = symbolList[runingAttamp];
                 //string companyNameCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
+
+                string companyNameCsv = symbolList[runingAttamp];
 
                 var securities = await Yahoo.Symbols(companyNameCsv)
                 .Fields(
@@ -75,7 +77,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                      rsi.ToString() // Convert everything to string
                  );
                 //Add it to the mongo db
-                UpdateMongoDb mongoDbService = new UpdateMongoDb();
                 await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportDataService , 
                     MongoDbInfra.DataBaseCollection.stockData);
                 //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
