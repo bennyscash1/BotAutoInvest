@@ -22,18 +22,6 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         [Test]
         public async Task _GetStockFromAiNews()
         {
-            #region Get stock company names from AI api news for local
-            /*
-                        var newsArticle = await GetNewsInformationJson(3);
-                        string formattedArticles = string.Join("\n\n---\n\n", newsArticle);
-
-                        string formattedArticlesJson = JsonConvert.SerializeObject(newsArticle, Formatting.Indented);*/
-            #endregion
-
-
-
-            /*           string topStockFromGrokAI = await openAiService.GetGrokResponse(urlNews,
-                          OpenAiService.AiPrePromptType.GetStockCompanysPrompts);*/
 
             OpenAiService openAiService = new OpenAiService();
             string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";

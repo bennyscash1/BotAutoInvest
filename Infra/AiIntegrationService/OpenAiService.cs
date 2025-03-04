@@ -81,7 +81,6 @@ namespace InvesAuto.Infra.AiIntegrationService
 
             return apiResponce;
         }
-
         public async Task<string> GetGrokResponse(string userMessage, AiPrePromptType aiRequest)
         {
 
