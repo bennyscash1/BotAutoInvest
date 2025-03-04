@@ -22,22 +22,23 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         [Test]
         public async Task _GetStockFromAiNews()
         {
-            #region Get stock company names from AI
-            var newsArticle = await GetNewsInformationJson(3);
-            string formattedArticles = string.Join("\n\n---\n\n", newsArticle);
+            #region Get stock company names from AI api news for local
+            /*
+                        var newsArticle = await GetNewsInformationJson(3);
+                        string formattedArticles = string.Join("\n\n---\n\n", newsArticle);
 
-            string formattedArticlesJson = JsonConvert.SerializeObject(newsArticle, Formatting.Indented);
+                        string formattedArticlesJson = JsonConvert.SerializeObject(newsArticle, Formatting.Indented);*/
+            #endregion
 
-            OpenAiService openAiService = new OpenAiService();
-            string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";
+
 
             /*           string topStockFromGrokAI = await openAiService.GetGrokResponse(urlNews,
                           OpenAiService.AiPrePromptType.GetStockCompanysPrompts);*/
-         
 
+            OpenAiService openAiService = new OpenAiService();
+            string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";
             string topStockFromAI = await openAiService.OpenAiServiceRequest(urlNews,
                 OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
-            #endregion
             // Regex pattern to match words after a number and a colon
             string pattern = @"\d+:\s([A-Za-z]+)";
             // Find matches
