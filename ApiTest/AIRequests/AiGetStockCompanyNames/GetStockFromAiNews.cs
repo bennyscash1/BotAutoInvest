@@ -22,20 +22,17 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
             #region Get stock company names from AI
             OpenAiService openAiService = new OpenAiService();
             string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";
-            string topStockFromGrokAI = await openAiService.GetGrokResponse(urlNews,
-               OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
+           
+ /*           string topStockFromGrokAI = await openAiService.GetGrokResponse(urlNews,
+               OpenAiService.AiPrePromptType.GetStockCompanysPrompts);*/
 
             string topStockFromAI = await openAiService.OpenAiServiceRequest(urlNews,
                 OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
             #endregion
-
-
             // Regex pattern to match words after a number and a colon
-            string pattern = @"\d+:\s([A-Z]+)";
-
+            string pattern = @"\d+:\s([A-Za-z]+)";
             // Find matches
             MatchCollection matches = Regex.Matches(topStockFromAI, pattern);
-
             DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
             UpdateMongoDb updateMongoDb = new UpdateMongoDb();
             bool isHaveUpdatge = true;
