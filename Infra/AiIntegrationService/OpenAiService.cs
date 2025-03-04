@@ -82,11 +82,12 @@ namespace InvesAuto.Infra.AiIntegrationService
             return apiResponce;
         }
 
-        string grokUrl = "https://api.x.ai/v1/chat/completions";
-        string apiGrokKey = Environment.GetEnvironmentVariable("GROK_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
-
         public async Task<string> GetGrokResponse(string userMessage, AiPrePromptType aiRequest)
         {
+
+            string grokUrl = "https://api.x.ai/v1/chat/completions";
+            string apiGrokKey = Environment.GetEnvironmentVariable("GROK_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
+
             using (HttpClient client = new HttpClient())
             {
                 string prePrompt;
