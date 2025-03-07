@@ -13,6 +13,7 @@ namespace InvestAuto.Test.ExternalApiTests.GenerateApiUserTokenTest
         public decimal lastVolume { get; set; }
     }
 
+
   
 
     public class GetResponceOutputDTO : HttpResponseMessage

@@ -21,7 +21,26 @@ namespace InvesAuto.Infra.AiIntegrationService
         }
         string GetStockCompanysPrompts = "You are a professional AI stock analysis agent tasked with collecting the latest stock market news. Review the URL news I provide next and respond with just two words: a noteworthy stock to consider now. If multiple stocks are notable, prefix with the count for example if you found 2 return me 1: value, 2: value, return only the Ticker Symbol for example for Apple retturn AAPL";
         string DataBaseAnalyst = "\"You are a database analytics expert. I will provide you with a database schema in JSON format containing stock data, including price, volume, timestamps, and optional indicators like RSI, moving averages, and EPS. Analyze the data and determine which of the following conditions applies based on trends in the data and general market context:\r\n1. Excellent condition for investment now (price trending upward, RSI below 70, or positive EPS improvement)\r\n2. Normal condition, neither rising nor falling (price stable, RSI between 40-60, no significant changes in indicators)\r\n3. Reverse condition, worth investing in a short (price trending downward, RSI above 30, or negative EPS worsening)\r\nRespond with only one option—1, 2, or 3. Base your decision on the provided data, prioritizing price trends over time, and supplement with indicator analysis if available. If no clear trend is present, default to 2.\"";
-        string promptScanUrl = "You are an expert stock analyst AI. Your task is to analyze the content of a given URL containing news or financial data about a specific stock or company. Carefully read and interpret the content of the page, identify the primary stock or company discussed, and return the exact ticker symbol and the company's name. If relevant, also summarize briefly if the news sentiment appears positive, neutral, or negative towards the stock.\"\r\n\r\nExample response format:\r\n\r\nTicker: AAPL\r\nCompany Name: Apple Inc.\r\nSentiment: Positive\r\nReady for your URL:";
+        string promptScanStringFromResponceNews =
+        "You are a financial AI specialized in stock market analysis. Your task is to analyze the content of financial news articles and extract relevant stock information.\n\n"
+        + "**Instructions:**\n"
+        + "- Identify the **stock ticker symbols** mentioned in the article.\n"
+        + "- Count the number of unique ticker symbols found.\n"
+        + "- Output the result in **exactly this format**, without any additional words:\n\n"
+        + "**Response Format:**\n"
+        + "Amount: [Number of Symbols]\n"
+        + "Symbols: [Comma-separated list of symbols]\n\n"
+        + "**Example Outputs:**\n"
+        + "- If no symbols are found:\n"
+        + "  Amount: 0\n"
+        + "  Symbols: \n\n"
+        + "- If one symbol is found:\n"
+        + "  Amount: 1\n"
+        + "  Symbols: AAPL\n\n"
+        + "- If multiple symbols are found:\n"
+        + "  Amount: 3\n"
+        + "  Symbols: AAPL, TSLA, AMZN\n\n"
+        + "Do **not** include explanations, comments, or extra text—return only the response in the exact format specified.";
         public async Task<string> OpenAiServiceRequest(string userPrompts, AiPrePromptType aiRequest)
         {
             OpenAiData openAiData = new OpenAiData();
@@ -33,7 +52,7 @@ namespace InvesAuto.Infra.AiIntegrationService
                     prePrompt = GetStockCompanysPrompts;
                     break;
                 case AiPrePromptType.PromptScanUrl:
-                    prePrompt = promptScanUrl;
+                    prePrompt = promptScanStringFromResponceNews;
                     break;
                 case AiPrePromptType.GetStockCompanysPrompts:
                     prePrompt = GetStockCompanysPrompts;

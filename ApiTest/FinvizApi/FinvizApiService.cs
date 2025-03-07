@@ -16,7 +16,7 @@ namespace InvesAuto.ApiTest.FinvizApi
         public async Task<bool> IsSymbolValid(string symbol)
         {
             bool isSymbolValid = false;
-            string finvizUrl = $"https://finviz.com/api/statement.ashx?t={symbol}&so=F&s=IA";
+            string finvizUrl = $"https://finviz.com/api/etf_holdings/{symbol}/top_ten";
             SetUpBaseUrl(finvizUrl);
             var responseUserProfile = await HttpService
             .CallWithoutBody<FinvisOutputDto>(
@@ -27,7 +27,7 @@ namespace InvesAuto.ApiTest.FinvizApi
 
             var responseUserProfileBody = responseUserProfile.BodyString;
         
-            if (responseUserProfileBody.Contains("error"))
+            if (responseUserProfileBody.Contains("\"rowData\": []"))
             {
                 isSymbolValid = false;
             }

@@ -28,7 +28,7 @@ namespace InvesAuto.ApiTest.ApiService
             var responseUserProfileBody = responseUserProfile.BodyString;
             return responseUserProfileBody;
         }
-        public async Task<List<string>> GetNewsInformationJson(int howManyArticle = 5)
+        public async Task<string> GetNewsInformationJson(int howManyArticle = 5)
         {
             string url = "https://newsapi.org/v2/everything?q=US stock market&language=en&sortBy=publishedAt&apiKey=a22df4aead2d4990a6f08da7ac8a0df3";
             SetUpBaseUrl(url);
@@ -37,29 +37,24 @@ namespace InvesAuto.ApiTest.ApiService
             {
                 Method = HttpCallMethod.Get,
                 Headers = new Dictionary<string, string>
-            {
-                { "User-Agent", "MyStockNewsApp/1.0" } // Set a custom User-Agent
-            }
+        {
+            { "User-Agent", "MyStockNewsApp/1.0" }
+        }
             };
+
             var response = await HttpService.CallWithoutBody<NewsapiOutputDto>(httpCallOptions);
 
-            Assert.That(HttpStatusCode.OK == response.HttpStatus,
-            response.BodyString);
+            Assert.That(HttpStatusCode.OK == response.HttpStatus, response.BodyString);
 
-            var responseListArticle = response.Result.Articles;//
-            var latestFiveArticles = responseListArticle
-                .OrderByDescending(a => a.publishedAt) // Sort by newest first
-                .Take(howManyArticle) // Get only the top 5
-                .Select(a => new Article
-                {
-                    title = a.title,
-                    description = a.description,
-                    content = a.content
-                })
-                .ToList();
-            return latestFiveArticles
+            var responseListArticle = response.Result.Articles;
+
+            var latestArticles = responseListArticle
+                .OrderByDescending(a => a.publishedAt)
+                .Take(howManyArticle)
                 .Select(a => $"Title: {a.title}\nDescription: {a.description}\nContent: {a.content}\n---")
-                .ToList(); ;
+                .ToList();
+
+            return string.Join("\n", latestArticles);
         }
     }
 }
