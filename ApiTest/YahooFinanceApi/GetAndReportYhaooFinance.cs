@@ -60,7 +60,16 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 var movingAvg200 = security[Field.TwoHundredDayAverage];
                 var high52Week = security[Field.FiftyTwoWeekHigh];
                 var low52Week = security[Field.FiftyTwoWeekLow];
-                var esp = security[Field.EpsTrailingTwelveMonths];
+                //var esp = security[Field.EpsTrailingTwelveMonths];
+                string eps;
+                try
+                {
+                    eps = security[Field.EpsTrailingTwelveMonths]?.ToString() ?? "Null";
+                }
+                catch (Exception)
+                {
+                    eps = "Null";
+                }
                 var rsi = security[Field.RegularMarketTime];
 
                 #region Report the responce data     
@@ -69,7 +78,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                      companyNameCsv,
                      price.ToString(),
                      volume.ToString(),
-                     esp.ToString(),
+                     eps.ToString(),
                      movingAvg50.ToString(),
                      movingAvg200.ToString(),
                      high52Week.ToString(),
