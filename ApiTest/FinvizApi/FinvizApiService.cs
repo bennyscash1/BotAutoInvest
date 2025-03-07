@@ -18,14 +18,15 @@ namespace InvesAuto.ApiTest.FinvizApi
             bool isSymbolValid = false;
             string finvizUrl = $"https://finviz.com/api/etf_holdings/{symbol}/top_ten";
             SetUpBaseUrl(finvizUrl);
-            var responseUserProfile = await HttpService
+            var resonceFinvizIsSymbolValid = await HttpService
             .CallWithoutBody<FinvisOutputDto>(
                 new HttpCallOptionsSimple("")
                 { Method = HttpCallMethod.Get });
-            Assert.That(HttpStatusCode.OK == responseUserProfile.HttpStatus,
-            responseUserProfile.BodyString);
-
-            var responseUserProfileBody = responseUserProfile.BodyString;
+            Assert.That(HttpStatusCode.OK == resonceFinvizIsSymbolValid.HttpStatus,
+            resonceFinvizIsSymbolValid.BodyString);
+            //Need to wait before get to the next request
+            await Task.Delay(4000);
+            var responseUserProfileBody = resonceFinvizIsSymbolValid.BodyString;
         
             if (responseUserProfileBody.Contains("\"rowData\": []"))
             {
@@ -36,6 +37,7 @@ namespace InvesAuto.ApiTest.FinvizApi
                 isSymbolValid = true;
             }
             return isSymbolValid;
+          
         }
 
     }

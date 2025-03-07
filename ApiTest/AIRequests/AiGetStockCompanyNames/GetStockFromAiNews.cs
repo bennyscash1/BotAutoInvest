@@ -19,12 +19,12 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get information from news and get string 
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(10);
+            var responceList = await GetNewsInformationJson(5);
             string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
             #endregion
             #region send it for AI
             string topStockFromAI = await openAiService.OpenAiServiceRequest(responceList,
-                OpenAiService.AiPrePromptType.PromptScanUrl);
+                OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
 
             #region test if the pattern is valid
