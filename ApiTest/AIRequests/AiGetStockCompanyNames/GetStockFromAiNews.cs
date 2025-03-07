@@ -24,9 +24,13 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
 
             OpenAiService openAiService = new OpenAiService();
+            var responceList =await GetNewsInformationJson(5);
+            string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
+
             string urlNews = "https://www.barrons.com/market-data/stocks/stock-picks?mod=BOL_TOPNAV";
             string topStockFromAI = await openAiService.OpenAiServiceRequest(urlNews,
-                OpenAiService.AiPrePromptType.GetStockCompanysPrompts);
+                OpenAiService.AiPrePromptType.PromptScanUrl);
+
             // Regex pattern to match words after a number and a colon
             string pattern = @"\d+:\s([A-Za-z]+)";
             // Find matches

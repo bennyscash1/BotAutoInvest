@@ -16,11 +16,12 @@ namespace InvesAuto.Infra.AiIntegrationService
         {
             ApiRequest,
             GetStockCompanysPrompts,
-            DataBaseAnalyst
+            DataBaseAnalyst,
+            PromptScanUrl
         }
         string GetStockCompanysPrompts = "You are a professional AI stock analysis agent tasked with collecting the latest stock market news. Review the URL news I provide next and respond with just two words: a noteworthy stock to consider now. If multiple stocks are notable, prefix with the count for example if you found 2 return me 1: value, 2: value, return only the Ticker Symbol for example for Apple retturn AAPL";
         string DataBaseAnalyst = "\"You are a database analytics expert. I will provide you with a database schema in JSON format containing stock data, including price, volume, timestamps, and optional indicators like RSI, moving averages, and EPS. Analyze the data and determine which of the following conditions applies based on trends in the data and general market context:\r\n1. Excellent condition for investment now (price trending upward, RSI below 70, or positive EPS improvement)\r\n2. Normal condition, neither rising nor falling (price stable, RSI between 40-60, no significant changes in indicators)\r\n3. Reverse condition, worth investing in a short (price trending downward, RSI above 30, or negative EPS worsening)\r\nRespond with only one option—1, 2, or 3. Base your decision on the provided data, prioritizing price trends over time, and supplement with indicator analysis if available. If no clear trend is present, default to 2.\"";
-
+        string promptScanUrl = "You are an expert stock analyst AI. Your task is to analyze the content of a given URL containing news or financial data about a specific stock or company. Carefully read and interpret the content of the page, identify the primary stock or company discussed, and return the exact ticker symbol and the company's name. If relevant, also summarize briefly if the news sentiment appears positive, neutral, or negative towards the stock.\"\r\n\r\nExample response format:\r\n\r\nTicker: AAPL\r\nCompany Name: Apple Inc.\r\nSentiment: Positive\r\nReady for your URL:";
         public async Task<string> OpenAiServiceRequest(string userPrompts, AiPrePromptType aiRequest)
         {
             OpenAiData openAiData = new OpenAiData();
@@ -30,6 +31,9 @@ namespace InvesAuto.Infra.AiIntegrationService
             {
                 case AiPrePromptType.ApiRequest:
                     prePrompt = GetStockCompanysPrompts;
+                    break;
+                case AiPrePromptType.PromptScanUrl:
+                    prePrompt = promptScanUrl;
                     break;
                 case AiPrePromptType.GetStockCompanysPrompts:
                     prePrompt = GetStockCompanysPrompts;
