@@ -6,6 +6,7 @@ using InvesAuto.Infra.DbService;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Text.RegularExpressions;
+using static InvesAuto.Infra.AiIntegrationService.OpenAiService;
 using static InvesAuto.Infra.BaseTest.EnumServiceList;
 
 namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
@@ -20,13 +21,20 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get information from news and get string 
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(7);
+            var responceList = await GetNewsInformationJson(70);
             string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
             #endregion
+
             #region send it for AI
             string topStockFromAI = await openAiService.OpenAiServiceRequest(responceList,
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
+            //DeepsSeekResponceAi
+           /* string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceList,
+                   AiPrePromptType.promptScanStringFromResponceNews);
+            //Grok 
+            string grokResponce = await openAiService.GetGrokResponse(responceList,
+                  AiPrePromptType.promptScanStringFromResponceNews);*/
 
             #region test if the pattern is valid
             // Regex pattern to match words after a number and a colon
@@ -54,12 +62,11 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                     FinvizApiService finvizApiService = new FinvizApiService();
                     bool isSymbolValid = await finvizApiService.IsSymbolValid(symboleName);
 
-                    #region Get market cap and validate if it beed then 2 bilion
                   
-                    #endregion
                     #region update the data to mongo only if the symbol is valid and the market cap bigger then 2 bilion
                     if (isSymbolValid)
                     {
+                        #region Get market cap and validate if it beed then 2 bilion
                         AlphaVantageApiService alphaVantageApiService = new AlphaVantageApiService();
                         string marketCap = await alphaVantageApiService.GetMarketCapabilityData(symboleName);
                         bool isMarketCapLargeAmount = IsMarketCapHaveALargeThreshold(marketCap);
@@ -78,7 +85,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                         {
                             Console.WriteLine($"The market cap amount: {marketCap} is less then 2 bil");
                         }
-
+                        #endregion
                     }
                     else
                     {

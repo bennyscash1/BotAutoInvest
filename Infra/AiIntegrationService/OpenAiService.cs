@@ -5,7 +5,9 @@ using OpenAI.Chat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace InvesAuto.Infra.AiIntegrationService
@@ -44,31 +46,34 @@ namespace InvesAuto.Infra.AiIntegrationService
                 + "  Amount: 3\n"
                 + "  Symbols: AAPL, TSLA, NVDA\n\n"
                 + "Do **not** include any extra text, explanations, or unrelated symbols. Only return the most relevant stocks that are truly impacted by the news and may experience market movement in the near future.";
-
-        public async Task<string> OpenAiServiceRequest(string userPrompts, AiPrePromptType aiRequest)
+        public string GetStockPrePromptPrompts(AiPrePromptType aiRequest)
         {
-            OpenAiData openAiData = new OpenAiData();
-            string model = OpenAiData.model;
             string prePrompt;
             switch (aiRequest)
             {
-                case AiPrePromptType.ApiRequest:
-                    prePrompt = GetStockCompanysPrompts;
-                    break;
+
                 case AiPrePromptType.promptScanStringFromResponceNews:
                     prePrompt = promptScanStringFromResponceNews;
-                    break;
-                case AiPrePromptType.GetStockCompanysPrompts:
-                    prePrompt = GetStockCompanysPrompts;
                     break;
                 case AiPrePromptType.DataBaseAnalyst:
                     prePrompt = DataBaseAnalyst;
                     break;
+                case AiPrePromptType.GetStockCompanysPrompts:
+                    prePrompt = GetStockCompanysPrompts;
+                    break;
                 default:
-                    prePrompt = "";
+                    prePrompt = "You are an AI assistant."; // Default fallback
                     break;
             }
-            Console.WriteLine("Before ai");
+            return prePrompt;
+        }
+        #region Open ai request
+        public async Task<string> OpenAiServiceRequest(string userPrompts, AiPrePromptType aiRequest)
+        {
+            OpenAiData openAiData = new OpenAiData();
+            string model = OpenAiData.model;
+            string prePrompt = GetStockPrePromptPrompts(aiRequest);
+      
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
             string apiResponce = "An error occurred or no response was returned.";
             //string combinedPrompt = $"{prePrompt}\n\n{userPrompts}";
@@ -83,7 +88,7 @@ namespace InvesAuto.Infra.AiIntegrationService
                     {
                  new { role = "system", content = prePrompt },
                  new { role = "user", content = userPrompts }
-             }
+                }
                 };
                 string jsonBody = JsonConvert.SerializeObject(openAiRequest, Formatting.Indented);
 
@@ -109,32 +114,17 @@ namespace InvesAuto.Infra.AiIntegrationService
 
             return apiResponce;
         }
+        #endregion
+
+        #region Grok ai request
         public async Task<string> GetGrokResponse(string userMessage, AiPrePromptType aiRequest)
         {
-
             string grokUrl = "https://api.x.ai/v1/chat/completions";
             string apiGrokKey = Environment.GetEnvironmentVariable("GROK_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
 
             using (HttpClient client = new HttpClient())
             {
-                string prePrompt;
-
-                // Assign the correct system prompt based on AiPrePromptType
-                switch (aiRequest)
-                {
-                    case AiPrePromptType.ApiRequest:
-                        prePrompt = GetStockCompanysPrompts;
-                        break;
-                    case AiPrePromptType.GetStockCompanysPrompts:
-                        prePrompt = GetStockCompanysPrompts;
-                        break;
-                    case AiPrePromptType.DataBaseAnalyst:
-                        prePrompt = DataBaseAnalyst;
-                        break;
-                    default:
-                        prePrompt = "You are an AI assistant."; // Default fallback
-                        break;
-                }
+                string aiPrePromptType = GetStockPrePromptPrompts(aiRequest);
 
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiGrokKey}");
 
@@ -142,22 +132,33 @@ namespace InvesAuto.Infra.AiIntegrationService
                 {
                     messages = new[]
                     {
-                        new { role = "system", content = prePrompt },  // Assign AiPrePromptType here
-                        new { role = "user", content = userMessage }   // User input
-                },
-                    model = "grok-2-1212",  // Use grok-3 if available
+                new { role = "system", content = aiPrePromptType },
+                new { role = "user", content = userMessage }
+            },
+                    model = "grok-2-1212",
                     stream = false,
                     temperature = 0
                 };
 
                 var jsonContent = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
-
                 HttpResponseMessage response = await client.PostAsync(grokUrl, jsonContent);
-
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadAsStringAsync();
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    // ✅ Extract only the "content" field from the response
+                    using JsonDocument doc = JsonDocument.Parse(jsonResponse);
+
+                    if (doc.RootElement.TryGetProperty("choices", out JsonElement choicesArray) &&
+                        choicesArray.GetArrayLength() > 0 &&
+                        choicesArray[0].TryGetProperty("message", out JsonElement message) &&
+                        message.TryGetProperty("content", out JsonElement contentElement))
+                    {
+                        return contentElement.GetString() ?? "No content available.";
+                    }
+
+                    return "Invalid response format.";
                 }
                 else
                 {
@@ -165,7 +166,52 @@ namespace InvesAuto.Infra.AiIntegrationService
                 }
             }
         }
+        #endregion
 
+        #region Deep seek ai request
+        private readonly HttpClient _httpClient = new HttpClient();
+
+        public  async Task<string> DeepSeekResponceAi(string userPrompts, AiPrePromptType aiRequest)
+        {
+            string apiUrl = "https://api.deepseek.com/chat/completions"; // Replace with actual API URL
+            string bearerToken = "sk-5706d7050b8c4bddb967ba236538d89d"; // Replace with actual token
+            string prePrompt = GetStockPrePromptPrompts(aiRequest);
+            var requestBody = new
+            {
+                model = "deepseek-chat",
+                messages = new[]
+                {
+                new { role = "system", content = prePrompt },
+                new { role = "user", content = userPrompts }
+            },
+                stream = false
+            };
+
+            string jsonRequest = System.Text.Json.JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json"); // ✅ "Content-Type" set correctly here
+
+            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+            {
+                Content = content
+            };
+
+            request.Headers.Add("Authorization", $"Bearer {bearerToken}"); // ✅ Correct place for Authorization
+                                                                           // No need to add "Content-Type" again here
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+
+            using JsonDocument doc = JsonDocument.Parse(jsonResponse);
+
+            string? contentResponce = doc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+
+            return contentResponce;
+        }
+        #endregion
     }
 }
 

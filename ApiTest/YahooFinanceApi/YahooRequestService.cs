@@ -1,25 +1,13 @@
-﻿using System;
+﻿using InvesAuto.Infra.DbService;
+using System;
 using System.Threading.Tasks;
 using YahooFinanceApi;
 
-public class StockSymbolData
-{
-    public string CompanyName { get; set; }
-    public string Price { get; set; }
-    public string Volume { get; set; }
-    public string MovingAvg50 { get; set; }
-    public string MovingAvg200 { get; set; }
-    public string High52Week { get; set; }
-    public string Low52Week { get; set; }
-    public string EPS { get; set; }
-    public string MarketTime { get; set; }
-    public string MarketCap { get; set; }
-    public string SharesOutstanding { get; set; }
-}
+
 
 public class YahooRequestService
 {
-    public static async Task<StockSymbolData> GetStockDataAsync(string companyName)
+    public static async Task<StockSymbolDataDto> GetStockDataAsync(string companyName)
     {
         try
         {
@@ -43,7 +31,7 @@ public class YahooRequestService
 
             var security = securities[companyName];
 
-            return new StockSymbolData
+            return new StockSymbolDataDto
             {
                 CompanyName = companyName,
                 Price = security[Field.RegularMarketPrice]?.ToString() ?? "Null",

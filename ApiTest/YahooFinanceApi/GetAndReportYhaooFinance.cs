@@ -39,7 +39,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
 
                 companyNameFromDB = symbolList[runingAttamp];
-                StockSymbolData result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
+                StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
                 // Initialize variables as empty strings
                 string companyName = "";
                 string price = "";
@@ -54,7 +54,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 string sharesOutstanding = "";
                 if (result != null)
                 {
-
                     // Example of using individual properties
                     companyName = result.CompanyName;
                     price = result.Price;
@@ -67,41 +66,50 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                     marketTime = result.MarketTime;
                     marketCap = result.MarketCap;
                     sharesOutstanding = result.SharesOutstanding;
-                }
-                bool isSymbolLargeStock = InfraApiService
-                    .IsMarketCapHaveALargeThreshold(marketCap);
-                if (isSymbolLargeStock)
-                {
-                    Console.WriteLine($"✅ The symbol {companyNameFromDB} information from yahoou was updated!");
 
-                    #region Report the responce data     
-                    DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
-                    Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnStockDataDictionary(
-                         companyNameFromDB,
-                         price,
-                         volume,
-                         eps,
-                         movingAvg50,
-                         movingAvg200,
-                         high52Week,
-                         low52Week,
-                         eps,
-                         marketTime,
-                         marketCap,
-                         sharesOutstanding
-                     );
-                    //Add it to the mongo db
-                    await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,
-                        MongoDbInfra.DataBaseCollection.stockData);
-                    Console.WriteLine($"Company stock: {companyNameFromDB} was updated");
+                    if (!string.IsNullOrEmpty(price))
+                    {
+                        bool isSymbolLargeStock = InfraApiService
+                            .IsMarketCapHaveALargeThreshold(marketCap);
+
+                        if (isSymbolLargeStock)
+                        {
+                            Console.WriteLine($"✅ The symbol {companyNameFromDB} information from yahoou was updated!");
+
+                            #region Report the responce data     
+                            DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
+                            Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnStockDataDictionary(
+                                 companyNameFromDB,
+                                 price,
+                                 volume,
+                                 eps,
+                                 movingAvg50,
+                                 movingAvg200,
+                                 high52Week,
+                                 low52Week,
+                                 eps,
+                                 marketTime,
+                                 marketCap,
+                                 sharesOutstanding
+                             );
+                            //Add it to the mongo db
+                            await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,
+                                MongoDbInfra.DataBaseCollection.stockData);
+                            Console.WriteLine($"Company stock: {companyNameFromDB} was updated");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"company stock: {companyNameFromDB} cap amount is {marketCap}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"company stock: {companyNameFromDB} price is value {price}");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine($"company stock: {companyNameFromDB} cap amount is {marketCap}");
-                }             
-                //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
+                
+                    
                 runingAttamp++;
-                //Do not remove it (to not blcok)
                 await Task.Delay(1000);
                 Console.WriteLine("The test while as being end!!!");
                 #endregion
