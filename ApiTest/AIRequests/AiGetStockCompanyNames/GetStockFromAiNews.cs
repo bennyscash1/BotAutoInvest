@@ -20,7 +20,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get information from news and get string 
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(10);
+            var responceList = await GetNewsInformationJson(7);
             string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
             #endregion
             #region send it for AI
