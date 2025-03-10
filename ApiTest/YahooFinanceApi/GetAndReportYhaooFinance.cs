@@ -1,7 +1,6 @@
-﻿using InvesAuto.Infra.DbService;
-using InvesAuto.Infra.InfraCommonService;
+﻿using InvesAuto.ApiTest.ApiService;
+using InvesAuto.Infra.DbService;
 using NUnit.Framework;
-using YahooFinanceApi;
 using static InvesAuto.Infra.BaseTest.EnumServiceList;
 
 namespace InvesAuto.ApiTest.YahooFinanceApi
@@ -14,12 +13,12 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
         public async Task _GetAndReportYhaooFinance()
         {
-       /*     InfraFileService infraFileService = new InfraFileService();
-            string currentPath = Directory.GetCurrentDirectory();
-            string companyPahtFile = infraFileService.GetCompanyStockFilePath();
-            string indexClumn = "A";
-            int companyIndextCounter = infraFileService
-                .GetCsvRowsIntValue(companyPahtFile, indexClumn);*/
+            /*     InfraFileService infraFileService = new InfraFileService();
+                 string currentPath = Directory.GetCurrentDirectory();
+                 string companyPahtFile = infraFileService.GetCompanyStockFilePath();
+                 string indexClumn = "A";
+                 int companyIndextCounter = infraFileService
+                     .GetCsvRowsIntValue(companyPahtFile, indexClumn);*/
 
             #region Get symbol data from db
             GetMongoDb getMongoDbDTO = new GetMongoDb(MongoDbInfra.DataBaseCollection.stockCompanyList);
@@ -35,42 +34,50 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
             {
                 //string companyNameCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
 
-                string companyNameCsv = "";
+                string companyNameFromDB = "";
                 // Extract the values
-                try
+
+
+                companyNameFromDB = symbolList[runingAttamp];
+                StockSymbolData result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
+                // Initialize variables as empty strings
+                string companyName = "";
+                string price = "";
+                string volume = "";
+                string movingAvg50 = "";
+                string movingAvg200 = "";
+                string high52Week = "";
+                string low52Week = "";
+                string eps = "";
+                string marketTime = "";
+                string marketCap = "";
+                string sharesOutstanding = "";
+                if (result != null)
                 {
-                    
-                    companyNameCsv = symbolList[runingAttamp];
-                    Console.WriteLine($"The symbol value is: {companyNameCsv}");
-                    var securities = await Yahoo.Symbols(companyNameCsv)
-                    .Fields(
-                        Field.RegularMarketPrice,       // Price
-                        Field.RegularMarketVolume,      // Volume
-                        Field.FiftyDayAverage,          // 50-day Moving Avg
-                        Field.TwoHundredDayAverage,     // 200-day Moving Avg
-                        Field.FiftyTwoWeekHigh,         // 52-week High
-                        Field.FiftyTwoWeekLow,          // 52-week Low
-                                                        // RSI Data (if available)
-                        Field.EpsTrailingTwelveMonths,  // EPS
-                        Field.RegularMarketTime         // Date & Time of last update
-                    ).QueryAsync();
 
-                    var security = securities[companyNameCsv];
-                    string price = security[Field.RegularMarketPrice]?.ToString() ?? "Null";
-                    string volume = security[Field.RegularMarketVolume]?.ToString() ?? "Null";
-                    string movingAvg50 = security[Field.FiftyDayAverage]?.ToString() ?? "Null";
-                    string movingAvg200 = security[Field.TwoHundredDayAverage]?.ToString() ?? "Null";
-                    string high52Week = security[Field.FiftyTwoWeekHigh]?.ToString() ?? "Null";
-                    string low52Week = security[Field.FiftyTwoWeekLow]?.ToString() ?? "Null";
-                    string eps = security[Field.EpsTrailingTwelveMonths]?.ToString() ?? "Null";
-                    string rsi = security[Field.RegularMarketTime]?.ToString() ?? "Null";
-
-                    Console.WriteLine($"✅ The symbol {companyNameCsv} information from yahoou was updated!");
+                    // Example of using individual properties
+                    companyName = result.CompanyName;
+                    price = result.Price;
+                    volume = result.Volume;
+                    movingAvg50 = result.MovingAvg50;
+                    movingAvg200 = result.MovingAvg200;
+                    high52Week = result.High52Week;
+                    low52Week = result.Low52Week;
+                    eps = result.EPS;
+                    marketTime = result.MarketTime;
+                    marketCap = result.MarketCap;
+                    sharesOutstanding = result.SharesOutstanding;
+                }
+                bool isSymbolLargeStock = InfraApiService
+                    .IsMarketCapHaveALargeThreshold(marketCap);
+                if (isSymbolLargeStock)
+                {
+                    Console.WriteLine($"✅ The symbol {companyNameFromDB} information from yahoou was updated!");
 
                     #region Report the responce data     
                     DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
                     Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnStockDataDictionary(
-                         companyNameCsv,
+                         companyNameFromDB,
                          price,
                          volume,
                          eps,
@@ -78,19 +85,20 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                          movingAvg200,
                          high52Week,
                          low52Week,
-                         rsi // Convert everything to string
+                         eps,
+                         marketTime,
+                         marketCap,
+                         sharesOutstanding
                      );
                     //Add it to the mongo db
-                    await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameCsv, reportDataService,
+                    await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,
                         MongoDbInfra.DataBaseCollection.stockData);
+                    Console.WriteLine($"Company stock: {companyNameFromDB} was updated");
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine($"⚠️ An error occurred: {e.Message}, for symbol {companyNameCsv}");
-                    Console.WriteLine($"🔍 StackTrace: {e.StackTrace}");
-                    // Optionally, log the full exception details
-                }
-
+                    Console.WriteLine($"company stock: {companyNameFromDB} cap amount is {marketCap}");
+                }             
                 //bool isUpdateSuccess = await InfraFileService.ReadAndUpdateCSVFile(reportFilePath, reportData);
                 runingAttamp++;
                 //Do not remove it (to not blcok)
@@ -98,6 +106,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 Console.WriteLine("The test while as being end!!!");
                 #endregion
             }
+
         }
     }
 }

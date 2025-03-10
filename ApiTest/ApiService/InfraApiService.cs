@@ -56,5 +56,13 @@ namespace InvesAuto.ApiTest.ApiService
 
             return string.Join("\n", latestArticles);
         }
+        public static bool IsMarketCapHaveALargeThreshold(string marketCapStr, long threshold = 2_000_000_000)
+        {
+            if (long.TryParse(marketCapStr, out long marketCap))
+            {
+                return marketCap >threshold;
+            }
+            return false; // Return false if conversion fails
+        }
     }
 }

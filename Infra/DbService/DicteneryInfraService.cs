@@ -3,8 +3,9 @@
     public class DicteneryInfraService
     {
         public async Task<Dictionary<string, string>> ReturnStockDataDictionary(
-          string symbol, string price, string volume, string esp,
-          string movingAvg50, string movingAvg200, string high52Week, string low52Week, string rsi)
+          string symbol, string price, string volume, string eps,
+          string movingAvg50, string movingAvg200, string high52Week, string low52Week, string rsi ,
+          string marketTime, string marketCap, string sharesOutstanding)
         {
             DateTime utcNow = DateTime.UtcNow;
             TimeZoneInfo israelTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Israel Standard Time");
@@ -18,12 +19,15 @@
                 { "symbol", symbol },
                 { "price", price },
                 { "volume", volume },
-                { "esp", esp },
+                { "eps", eps },  // Fixed typo from "esp" to "eps"
                 { "Dayes50MovingAvg", movingAvg50 },
                 { "Dayes200MovingAvg", movingAvg200 },
                 { "week52High", high52Week },
                 { "week52Low", low52Week },
-                { "RsiData", rsi }
+                { "RsiData", rsi },
+                { "MarketTime", marketTime }, // Added missing Market Time
+                { "MarketCap", marketCap },   // Added missing Market Cap
+                { "SharesOutstanding", sharesOutstanding } // Added missing Shares Outstanding
             };
 
             return reportData; // ✅ Return the dictionary

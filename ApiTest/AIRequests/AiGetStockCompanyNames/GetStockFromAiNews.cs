@@ -52,6 +52,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                     string symboleName = symbolsArray[i];
                     FinvizApiService finvizApiService = new FinvizApiService();
                     bool isSymbolValid = await finvizApiService.IsSymbolValid(symboleName);
+
                     if (isSymbolValid)
                     {
                         #region update the data to mongo
