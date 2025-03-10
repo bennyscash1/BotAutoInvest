@@ -1,5 +1,6 @@
 ﻿using InvesAuto.ApiTest.ApiService;
 using InvesAuto.ApiTest.FinvizApi;
+using InvesAuto.ApiTest.LaphaVantageApi;
 using InvesAuto.Infra.AiIntegrationService;
 using InvesAuto.Infra.DbService;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get information from news and get string 
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(5);
+            var responceList = await GetNewsInformationJson(10);
             string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
             #endregion
             #region send it for AI
@@ -53,21 +54,38 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                     FinvizApiService finvizApiService = new FinvizApiService();
                     bool isSymbolValid = await finvizApiService.IsSymbolValid(symboleName);
 
+                    #region Get market cap and validate if it beed then 2 bilion
+                  
+                    #endregion
+                    #region update the data to mongo only if the symbol is valid and the market cap bigger then 2 bilion
                     if (isSymbolValid)
                     {
-                        #region update the data to mongo
-                        Dictionary<string, string> reportDataName = await dicteneryInfraService
-                           .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
-                        await updateMongoDb
-                            .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName,
-                        MongoDbInfra.DataBaseCollection.stockCompanyList);
-                        #endregion
-                        Console.WriteLine($"The symbole {symboleName} was update on Db successfull");
+                        AlphaVantageApiService alphaVantageApiService = new AlphaVantageApiService();
+                        string marketCap = await alphaVantageApiService.GetMarketCapabilityData(symboleName);
+                        bool isMarketCapLargeAmount = IsMarketCapHaveALargeThreshold(marketCap);
+                        if (isMarketCapLargeAmount)
+                        {
+                            #region update the data to mongo
+                            Dictionary<string, string> reportDataName = await dicteneryInfraService
+                               .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
+                            await updateMongoDb
+                                .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName,
+                            MongoDbInfra.DataBaseCollection.stockCompanyList);
+                            #endregion
+                            Console.WriteLine($"The symbole {symboleName} was update on Db successfull");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"The market cap amount: {marketCap} is less then 2 bil");
+                        }
+
                     }
                     else
                     {
                         Console.WriteLine($"The symbole {symboleName} is not valid");
                     }
+
+                    #endregion
                 }
             }
         }

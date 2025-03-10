@@ -72,7 +72,6 @@ namespace InvesAuto.Infra.AiIntegrationService
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? throw new InvalidOperationException("API key is missing from environment variables.");
             string apiResponce = "An error occurred or no response was returned.";
             //string combinedPrompt = $"{prePrompt}\n\n{userPrompts}";
-            Console.WriteLine(  "after ai");
             try
             {
                 ChatClient client = new ChatClient(model, apiKey);
@@ -100,6 +99,8 @@ namespace InvesAuto.Infra.AiIntegrationService
                 {
                     apiResponce = "No valid content found in the response.";
                 }
+                Console.WriteLine("after ai");
+
             }
             catch (Exception ex)
             {

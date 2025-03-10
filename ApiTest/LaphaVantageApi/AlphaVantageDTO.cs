@@ -46,6 +46,10 @@ namespace InvestAuto.Test.ExternalApiTests.GenerateApiUserTokenTest
         [JsonProperty("RSI")]
         public string RSI { get; set; }
     }
+    public class GetAlphaVantageOverviewOutputDTO
+    {
+        public string MarketCapitalization { get; set; }
+    }
 
 
 

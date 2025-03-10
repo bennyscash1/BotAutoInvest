@@ -145,5 +145,23 @@ namespace InvesAuto.ApiTest.LaphaVantageApi
             return rsi;
         }
         #endregion
+
+        #region Get market capitalization data
+        public async Task<string> GetMarketCapabilityData(string CompanyNameCsv)
+        {
+            string token = GetTestData(configDataEnum.AlphaVantageToken);
+            Console.WriteLine("Get Rsi Alphav vantage data");
+            string finvizUtl = $"https://www.alphavantage.co/query?function=OVERVIEW&symbol={CompanyNameCsv}&apikey={token}";
+            SetUpBaseUrl(finvizUtl);
+            var responseOutputOverviewAlpahVantage = await HttpService
+            .CallWithoutBody<GetAlphaVantageOverviewOutputDTO>(
+                new HttpCallOptionsSimple("")
+                { Method = HttpCallMethod.Get });
+            Assert.That(HttpStatusCode.OK == responseOutputOverviewAlpahVantage.HttpStatus, responseOutputOverviewAlpahVantage.BodyString);
+            string jsonResponse = responseOutputOverviewAlpahVantage.BodyString;
+            string capMarketData = responseOutputOverviewAlpahVantage.Result.MarketCapitalization;
+            return capMarketData;
+        }
+        #endregion
     }
 }

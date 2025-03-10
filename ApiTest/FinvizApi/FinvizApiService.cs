@@ -15,7 +15,10 @@ namespace InvesAuto.ApiTest.FinvizApi
     {
         public async Task<bool> IsSymbolValid(string symbol)
         {
-            bool isSymbolValid = false;
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                return false;
+            }
             string finvizUrl = $"https://finviz.com/api/etf_holdings/{symbol}/top_ten";
             SetUpBaseUrl(finvizUrl);
             var resonceFinvizIsSymbolValid = await HttpService
@@ -25,18 +28,17 @@ namespace InvesAuto.ApiTest.FinvizApi
             Assert.That(HttpStatusCode.OK == resonceFinvizIsSymbolValid.HttpStatus,
             resonceFinvizIsSymbolValid.BodyString);
             //Need to wait before get to the next request
-            await Task.Delay(4000);
+            await Task.Delay(3000);
             var responseUserProfileBody = resonceFinvizIsSymbolValid.BodyString;
         
-            if (responseUserProfileBody.Contains("\"rowData\": []"))
+            if (responseUserProfileBody.Contains("\"rowData\": []") )
             {
-                isSymbolValid = false;
+                return false;
             }
             else
             {
-                isSymbolValid = true;
+                return true;
             }
-            return isSymbolValid;
           
         }
 
