@@ -26,7 +26,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
             #endregion
 
             #region send it for AI
-            string topStockFromAI = await openAiService.OpenAiServiceRequest(responceList,
+            string topStockFromOpenAI = await openAiService.OpenAiServiceRequest(responceList,
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
             //DeepsSeekResponceAi
@@ -40,7 +40,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
             // Regex pattern to match words after a number and a colon
             #region test if the pattern is valid
             string pattern = @"Symbols:\s([\w, ]+)";
-            Match match = Regex.Match(topStockFromAI, pattern);
+            Match match = Regex.Match(topStockFromOpenAI, pattern);
             #endregion
             if (match.Success)
             {
@@ -48,7 +48,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                 string symbolsString = match.Groups[1].Value; // Extract matched symbols
                 string[] symbolsArray = symbolsString.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
 
-                MatchCollection matches = Regex.Matches(topStockFromAI, pattern);
+                MatchCollection matches = Regex.Matches(topStockFromOpenAI, pattern);
                 DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
                 UpdateMongoDb updateMongoDb = new UpdateMongoDb();
                 #endregion
