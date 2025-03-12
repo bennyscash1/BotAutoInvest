@@ -21,4 +21,8 @@ namespace InvesAuto.ApiTest.ApiService
         public string content { get; set; }
         public string publishedAt { get; set; }
     }
+    public class GeneralEmptyOutputDto
+    {
+
+    }
 }

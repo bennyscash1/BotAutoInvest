@@ -21,12 +21,13 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
         {
             #region Get information from news and get string 
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(50);
-            string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
+            //var responceList = await GetNewsApiInformationJson(50);
+            string responceXmlNews = await GetCnbcNewsXml(20);
+            //string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
             #endregion
 
             #region send it for AI
-            string topStockFromOpenAI = await openAiService.OpenAiServiceRequest(responceList,
+            string topStockFromOpenAI = await openAiService.OpenAiServiceRequest(responceXmlNews,
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
             //DeepsSeekResponceAi

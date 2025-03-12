@@ -17,12 +17,17 @@ namespace InvesAuto.ApiTest.TempTest
         public async Task TestAIResponce()
         {
             OpenAiService openAiService = new OpenAiService();
-            var responceList = await GetNewsInformationJson(5);
-            string jsonFormattedString = JsonConvert.SerializeObject(responceList, Formatting.Indented);
+            var responceXmlNews = await GetCnbcNewsXml(20);
+            //  var responceList = await GetNewsApiInformationJson(5);
+            //  string jsonFormattedString = JsonConvert.SerializeObject(responceXmlNews, Formatting.Indented);
             #region send it for AI
 
-            string topStockFromAI = await openAiService.GetGrokResponse(responceList,
+            string topStockFromAI = await openAiService.GetGrokResponse(responceXmlNews,
                         AiPrePromptType.promptScanStringFromResponceNews);
+            string topStockFromOpenAI = await openAiService.OpenAiServiceRequest(responceXmlNews,
+                       AiPrePromptType.promptScanStringFromResponceNews);
+            string deepSeek = await openAiService.DeepSeekResponceAi(responceXmlNews,
+                     AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
         }
 
