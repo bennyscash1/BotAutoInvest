@@ -31,14 +31,12 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
             //DeepsSeekResponceAi
-           /* string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceList,
+            string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceXmlNews,
                    AiPrePromptType.promptScanStringFromResponceNews);
             //Grok 
-            string grokResponce = await openAiService.GetGrokResponse(responceList,
-                  AiPrePromptType.promptScanStringFromResponceNews);*/
+            string grokResponce = await openAiService.GetGrokResponse(responceXmlNews,
+                  AiPrePromptType.promptScanStringFromResponceNews);
 
-            #region test if the pattern is valid
-            // Regex pattern to match words after a number and a colon
             #region test if the pattern is valid
             string pattern = @"Symbols:\s([\w, ]+)";
             Match match = Regex.Match(topStockFromOpenAI, pattern);
@@ -97,43 +95,5 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                 }
             }
         }
-
-
-
-
-
-
-        #endregion
-        /*        // Find matches
-                    string pattern = @"\d+:\s([A-Za-z]+)";
-
-                #region Get stock company names from AI
-                foreach (Match match in matches)
-                {
-                    Console.WriteLine(match.Groups[1].Value);
-                    var x = match.Groups[1];
-            string symboleName = x.Value;
-
-            #region Test if symbol from ai is valid
-            FinvizApiService finvizApiService = new FinvizApiService();
-            bool isSymbolValid = await finvizApiService.IsSymbolValid(symboleName);
-                    #endregion
-                    if (isSymbolValid)
-                    {
-                        Dictionary<string, string> reportDataName = await dicteneryInfraService
-                        .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
-
-            await updateMongoDb
-                .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName,
-                MongoDbInfra.DataBaseCollection.stockCompanyList);
-            Console.WriteLine($"The symbole {symboleName} was update on Db successfull");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"The symbole {symboleName} is not valid");
-                    }
-
-                }*/
-
     }
 }
