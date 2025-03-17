@@ -5,7 +5,8 @@
         public async Task<Dictionary<string, string>> ReturnStockDataDictionary(
           string symbol, string price, string volume, string eps,
           string movingAvg50, string movingAvg200, string high52Week, string low52Week, string rsi ,
-          string marketTime, string marketCap, string sharesOutstanding)
+          string marketTime, string marketCap, string sharesOutstanding,
+          string averageDailyVolume3Month, string trailingAnnualDividendRate)
         {
             DateTime utcNow = DateTime.UtcNow;
             TimeZoneInfo israelTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Israel Standard Time");
@@ -27,7 +28,8 @@
                 { "RsiData", rsi },
                 { "MarketTime", marketTime }, // Added missing Market Time
                 { "MarketCap", marketCap },   // Added missing Market Cap
-                { "SharesOutstanding", sharesOutstanding } // Added missing Shares Outstanding
+                { "AverageDailyVolume3Month", averageDailyVolume3Month }, // Added missing Shares Outstanding
+                { "TrailingAnnualDividendRate", trailingAnnualDividendRate } // Added missing Shares Outstanding
             };
 
             return reportData; // ✅ Return the dictionary

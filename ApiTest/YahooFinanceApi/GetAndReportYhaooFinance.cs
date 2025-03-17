@@ -12,7 +12,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
         [Test]
         public async Task _GetAndReportYhaooFinance()
         {
-
             #region Get symbol data from db
             GetMongoDb getMongoDbDTO = new GetMongoDb(MongoDbInfra.DataBaseCollection.stockCompanyList);
             var symbolList = await getMongoDbDTO
@@ -70,7 +69,9 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                                  eps,
                                  marketTime,
                                  marketCap,
-                                 sharesOutstanding
+                                 sharesOutstanding,
+                                 averageDailyVolume3Month,
+                                 trailingAnnualDividendRate
                              );
                             //Add it to the mongo db
                             await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,
