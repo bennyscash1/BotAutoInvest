@@ -14,6 +14,19 @@ namespace InvesAuto.ApiTest.ApiService
 {
     public class InfraApiService : ApiInfraTest
     {
+        public string companyName = "";
+        public string price = "";
+        public string volume = "";
+        public string movingAvg50 = "";
+        public string movingAvg200 = "";
+        public string high52Week = "";
+        public string low52Week = "";
+        public string eps = "";
+        public string marketTime = "";
+        public string marketCap = "";
+        public string sharesOutstanding = "";
+        public string averageDailyVolume3Month = "";
+        public string trailingAnnualDividendRate = "";
         //public async Task <int>Get
         public async Task<string> GetNewsInformationXmlBySymbol(string symbol)
         {
@@ -87,13 +100,6 @@ namespace InvesAuto.ApiTest.ApiService
             return string.Join("\n", articles);
         }
 
-        public static bool IsMarketCapHaveALargeThreshold(string marketCapStr, long threshold = 2_000_000_000)
-        {
-            if (long.TryParse(marketCapStr, out long marketCap))
-            {
-                return marketCap >threshold;
-            }
-            return false; // Return false if conversion fails
-        }
+
     }
 }

@@ -7,10 +7,9 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 {
     [TestFixture, Category(Categories.ApiStockDataGit),
         Category(TestLevel.Level_1)]
-    public class GetAndReportYhaooFinance
+    public class GetAndReportYhaooFinance :YahooRequestService
     {
         [Test]
-
         public async Task _GetAndReportYhaooFinance()
         {
 
@@ -31,19 +30,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 companyNameFromDB = symbolList[runingAttamp];
                 StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
                 // Initialize variables as empty strings
-                string companyName = "";
-                string price = "";
-                string volume = "";
-                string movingAvg50 = "";
-                string movingAvg200 = "";
-                string high52Week = "";
-                string low52Week = "";
-                string eps = "";
-                string marketTime = "";
-                string marketCap = "";
-                string sharesOutstanding = "";
-                string averageDailyVolume3Month = "";
-                string trailingAnnualDividendRate = "";
                 if (result != null)
                 {
                     // Example of using individual properties
@@ -63,7 +49,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
                     if (!string.IsNullOrEmpty(price))
                     {
-                        bool isSymbolLargeStock = InfraApiService
+                        bool isSymbolLargeStock = YahooRequestService
                             .IsMarketCapHaveALargeThreshold(marketCap);
 
                         if (isSymbolLargeStock)

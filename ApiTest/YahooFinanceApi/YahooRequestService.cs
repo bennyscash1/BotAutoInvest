@@ -1,12 +1,16 @@
-﻿using InvesAuto.Infra.DbService;
+﻿using InvesAuto.ApiTest.ApiService;
+using InvesAuto.Infra.DbService;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using YahooFinanceApi;
 
 
 
-public class YahooRequestService
+public class YahooRequestService : InfraApiService
 {
+
+
     public static async Task<StockSymbolDataDto> GetStockDataAsync(string companyName)
     {
         try
@@ -57,5 +61,61 @@ public class YahooRequestService
             return null;
         }
     }
+    public static bool IsMarketCapHaveALargeThreshold(string marketCapStr, long threshold = 2_000_000_000)
+    {
+        if (long.TryParse(marketCapStr, out long marketCap))
+        {
+            return marketCap > threshold;
+        }
+        return false; // Return false if conversion fails
+    }
+    public bool isSharesOutstandingDiffFromaverageDailyVolume3Month(
+      string sharesOutstanding,
+      string averageDailyVolume3Month,
+      int diffrentPercentage = 2)
+    {
+        if (!double.TryParse(sharesOutstanding, out double sharesOutstandingVal) ||
+            !double.TryParse(averageDailyVolume3Month, out double averageDailyVolumeVal))
+        {
+            Console.WriteLine($"Invalid or missing input. sharesOutstanding: {sharesOutstanding}, averageDailyVolume3Month: {averageDailyVolume3Month}");
+            return false;
+        }
 
+        double difference = Math.Abs(sharesOutstandingVal - averageDailyVolumeVal);
+        double percentageDifference = (difference / sharesOutstandingVal) * 100;
+
+        return percentageDifference >= diffrentPercentage;
+    }
+
+    public bool isTrailingAnnualDividendRateIsBig(string dayes50MovingAvg, string dayes200MovingAvg,
+        string trailingAnnualDividendRate, int defultDividendRate =3)
+    {
+        if (string.IsNullOrEmpty(dayes50MovingAvg) || string.IsNullOrEmpty(dayes200MovingAvg) ||
+            string.IsNullOrEmpty(trailingAnnualDividendRate))
+        {
+            Console.WriteLine($"dayes50MovingAvg value: {dayes50MovingAvg}, dayes200MovingAvg value: {dayes200MovingAvg}, trailingAnnualDividendRate value: {trailingAnnualDividendRate}");
+            return false;
+        }
+        decimal dayes50MovingNumber = decimal.Parse(dayes50MovingAvg, CultureInfo.InvariantCulture);
+        decimal dayes200MovingNumber = decimal.Parse(dayes200MovingAvg, CultureInfo.InvariantCulture);
+        decimal intDividendRate = decimal.Parse(trailingAnnualDividendRate, CultureInfo.InvariantCulture);
+
+        if (dayes50MovingNumber > dayes200MovingNumber)
+        {
+            return true;
+        }
+        else
+        {
+            if (intDividendRate >= defultDividendRate)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+    }
 }

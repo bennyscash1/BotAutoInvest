@@ -1,6 +1,7 @@
 ﻿using InvesAuto.ApiTest.ApiService;
 using InvesAuto.ApiTest.FinvizApi;
 using InvesAuto.ApiTest.LaphaVantageApi;
+using InvesAuto.ApiTest.YahooFinanceApi;
 using InvesAuto.Infra.AiIntegrationService;
 using InvesAuto.Infra.DbService;
 using Newtonsoft.Json;
@@ -31,11 +32,11 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
             //DeepsSeekResponceAi
-            string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceXmlNews,
+        /*    string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceXmlNews,
                    AiPrePromptType.promptScanStringFromResponceNews);
             //Grok 
             string grokResponce = await openAiService.GetGrokResponse(responceXmlNews,
-                  AiPrePromptType.promptScanStringFromResponceNews);
+                  AiPrePromptType.promptScanStringFromResponceNews);*/
 
             #region test if the pattern is valid
             string pattern = @"Symbols:\s([\w, ]+)";
@@ -49,7 +50,6 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
 
                 MatchCollection matches = Regex.Matches(topStockFromOpenAI, pattern);
                 DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
-                UpdateMongoDb updateMongoDb = new UpdateMongoDb();
                 #endregion
 
                 bool isHaveUpdatge = true;
@@ -60,38 +60,58 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                     string symboleName = symbolsArray[i];
                     FinvizApiService finvizApiService = new FinvizApiService();
                     bool isSymbolValid = await finvizApiService.IsSymbolValid(symboleName);
-
                   
                     #region update the data to mongo only if the symbol is valid and the market cap bigger then 2 bilion
                     if (isSymbolValid)
                     {
-                        #region Get market cap and validate if it beed then 2 bilion
+                        #region Get symbol data from yahoo
                         AlphaVantageApiService alphaVantageApiService = new AlphaVantageApiService();
                         string marketCap = await alphaVantageApiService.GetMarketCapabilityData(symboleName);
-                        bool isMarketCapLargeAmount = IsMarketCapHaveALargeThreshold(marketCap);
+
+                        YahooRequestService yahooRequestService = new YahooRequestService();
+                        StockSymbolDataDto resultSymbolData = await YahooRequestService.GetStockDataAsync(symboleName);
+                        //marketCap = resultSymbolData.MarketCap;
+                 
+                        bool isMarketCapLargeAmount = YahooRequestService.IsMarketCapHaveALargeThreshold(marketCap);
                         if (isMarketCapLargeAmount)
                         {
-                            #region update the data to mongo
-                            Dictionary<string, string> reportDataName = await dicteneryInfraService
-                               .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
-                            await updateMongoDb
-                                .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName,
-                            MongoDbInfra.DataBaseCollection.stockCompanyList);
+                            DbFilterValidation dbFilterValidation = new DbFilterValidation();
+                            sharesOutstanding = resultSymbolData.SharesOutstanding;
+                            averageDailyVolume3Month = resultSymbolData.AverageDailyVolume3Month;
+                            trailingAnnualDividendRate = resultSymbolData.TrailingAnnualDividendRate;
+
+                            bool isAllFilterPass = await dbFilterValidation.isFilterDataValidToSaveOnDb(symboleName, marketCap,
+                                sharesOutstanding, averageDailyVolume3Month, trailingAnnualDividendRate,
+                                movingAvg50, movingAvg200, yahooRequestService);
                             #endregion
-                            Console.WriteLine($"The symbole {symboleName} was update on Db successfull");
+                            if (isAllFilterPass)
+                            {
+                                #region update the data to mongo
+                                UpdateMongoDb updateMongoDb = new UpdateMongoDb();
+                                Dictionary<string, string> reportDataName = await dicteneryInfraService
+                                   .ReturnStockNameDictionary(symboleName, isHaveUpdatge.ToString());
+                                await updateMongoDb
+                                    .InsertOrUpdateDicteneryDataToMongo(symboleName, reportDataName,
+                                MongoDbInfra.DataBaseCollection.stockCompanyList);
+                                #endregion
+                                Console.WriteLine($"The symbole {symboleName} was update on Db successfull");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"The symbol : {symboleName} filter failed");
+                            }
+                            #endregion
                         }
                         else
                         {
-                            Console.WriteLine($"The market cap amount: {marketCap} is less then 2 bil");
+                            Console.WriteLine($"The market cap amount: {marketCap} is less than 2 bil for symbol {symboleName}");
                         }
-                        #endregion
                     }
                     else
                     {
                         Console.WriteLine($"The symbole {symboleName} is not valid");
                     }
 
-                    #endregion
                 }
             }
         }
