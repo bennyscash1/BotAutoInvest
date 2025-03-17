@@ -13,12 +13,6 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
         public async Task _GetAndReportYhaooFinance()
         {
-            /*     InfraFileService infraFileService = new InfraFileService();
-                 string currentPath = Directory.GetCurrentDirectory();
-                 string companyPahtFile = infraFileService.GetCompanyStockFilePath();
-                 string indexClumn = "A";
-                 int companyIndextCounter = infraFileService
-                     .GetCsvRowsIntValue(companyPahtFile, indexClumn);*/
 
             #region Get symbol data from db
             GetMongoDb getMongoDbDTO = new GetMongoDb(MongoDbInfra.DataBaseCollection.stockCompanyList);
@@ -32,11 +26,7 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
             while (runingAttamp < dbStockCount)
             {
-                //string companyNameCsv = infraFileService.GetCsvValue(companyPahtFile, $"{indexClumn}{runingAttamp}");
-
                 string companyNameFromDB = "";
-                // Extract the values
-
 
                 companyNameFromDB = symbolList[runingAttamp];
                 StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
@@ -52,6 +42,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                 string marketTime = "";
                 string marketCap = "";
                 string sharesOutstanding = "";
+                string averageDailyVolume3Month = "";
+                string trailingAnnualDividendRate = "";
                 if (result != null)
                 {
                     // Example of using individual properties
@@ -66,6 +58,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                     marketTime = result.MarketTime;
                     marketCap = result.MarketCap;
                     sharesOutstanding = result.SharesOutstanding;
+                    averageDailyVolume3Month = result.AverageDailyVolume3Month;
+                    trailingAnnualDividendRate = result.TrailingAnnualDividendRate;
 
                     if (!string.IsNullOrEmpty(price))
                     {

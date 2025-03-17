@@ -20,5 +20,8 @@ namespace InvesAuto.Infra.DbService
         public string MarketTime { get; set; }
         public string MarketCap { get; set; }
         public string SharesOutstanding { get; set; }
+        public string AverageDailyVolume3Month { get; set; }
+        public string TrailingAnnualDividendRate { get; set; }
+
     }
 }

@@ -22,7 +22,9 @@ public class YahooRequestService
                     Field.EpsTrailingTwelveMonths,
                     Field.RegularMarketTime,
                     Field.MarketCap,
-                    Field.SharesOutstanding
+                    Field.SharesOutstanding,
+                    Field.AverageDailyVolume3Month,
+                    Field.TrailingAnnualDividendRate
                 )
                 .QueryAsync();
 
@@ -43,7 +45,9 @@ public class YahooRequestService
                 EPS = security[Field.EpsTrailingTwelveMonths]?.ToString() ?? "Null",
                 MarketTime = security[Field.RegularMarketTime]?.ToString() ?? "Null",
                 MarketCap = security[Field.MarketCap]?.ToString() ?? "Null",
-                SharesOutstanding = security[Field.SharesOutstanding]?.ToString() ?? "Null"
+                SharesOutstanding = security[Field.SharesOutstanding]?.ToString() ?? "Null",
+                AverageDailyVolume3Month = security[Field.AverageDailyVolume3Month]?.ToString() ?? "Null",
+                TrailingAnnualDividendRate = security[Field.TrailingAnnualDividendRate]?.ToString() ?? "Null"
             };
         }
         catch (Exception ex)
