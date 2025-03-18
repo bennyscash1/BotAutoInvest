@@ -1,4 +1,6 @@
 ﻿using InvesAuto.ApiTest.ApiService;
+using InvesAuto.ApiTest.FinvizApi;
+using InvesAuto.ApiTest.LaphaVantageApi;
 using InvesAuto.Infra.DbService;
 using NUnit.Framework;
 using static InvesAuto.Infra.BaseTest.EnumServiceList;
@@ -45,7 +47,10 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                     sharesOutstanding = result.SharesOutstanding;
                     averageDailyVolume3Month = result.AverageDailyVolume3Month;
                     trailingAnnualDividendRate = result.TrailingAnnualDividendRate;
-
+                    futurePrice = result.FuturePrice;
+                    label = result.Label;
+                    //FinvizApiService finvizApiService = new FinvizApiService();
+                    rsi = await FinvizApiService.GetRsiFromFinviz(companyNameFromDB);
                     if (!string.IsNullOrEmpty(price))
                     {
                         bool isSymbolLargeStock = YahooRequestService
@@ -66,12 +71,14 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                                  movingAvg200,
                                  high52Week,
                                  low52Week,
-                                 eps,
+                                 rsi,
                                  marketTime,
                                  marketCap,
                                  sharesOutstanding,
                                  averageDailyVolume3Month,
-                                 trailingAnnualDividendRate
+                                 trailingAnnualDividendRate,
+                                 futurePrice,
+                                 label
                              );
                             //Add it to the mongo db
                             await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,

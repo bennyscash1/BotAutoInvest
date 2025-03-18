@@ -17,16 +17,20 @@ namespace InvesAuto.ApiTest.ApiService
         public string companyName = "";
         public string price = "";
         public string volume = "";
+        public string eps = "";
         public string movingAvg50 = "";
         public string movingAvg200 = "";
         public string high52Week = "";
         public string low52Week = "";
-        public string eps = "";
+        public string rsi = "";
         public string marketTime = "";
         public string marketCap = "";
         public string sharesOutstanding = "";
         public string averageDailyVolume3Month = "";
         public string trailingAnnualDividendRate = "";
+        public string futurePrice = "";
+        public string label = "";
+
         //public async Task <int>Get
         public async Task<string> GetNewsInformationXmlBySymbol(string symbol)
         {
