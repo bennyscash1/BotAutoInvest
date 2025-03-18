@@ -32,7 +32,7 @@ namespace InvesAuto.ApiTest.AIRequests.AiGetStockCompanyNames
                 OpenAiService.AiPrePromptType.promptScanStringFromResponceNews);
             #endregion
             //DeepsSeekResponceAi
-        /*    string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceXmlNews,
+     /*       string deepSeekResponce = await openAiService.DeepSeekResponceAi(responceXmlNews,
                    AiPrePromptType.promptScanStringFromResponceNews);
             //Grok 
             string grokResponce = await openAiService.GetGrokResponse(responceXmlNews,

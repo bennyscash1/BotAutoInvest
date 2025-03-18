@@ -18,11 +18,11 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
             string movingAvg200,
             YahooRequestService yahooRequestService)
         {
-            if (!YahooRequestService.IsMarketCapHaveALargeThreshold(marketCap))
+         /*   if (!YahooRequestService.IsMarketCapHaveALargeThreshold(marketCap))
             {
                 Console.WriteLine($"The market cap amount: {marketCap} is less than 2 bil");
                 return false;
-            }
+            }*/
 
             bool isSharesOutstandingDiff = yahooRequestService
                 .isSharesOutstandingDiffFromaverageDailyVolume3Month(sharesOutstanding, averageDailyVolume3Month);
@@ -30,7 +30,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
             if (isSharesOutstandingDiff)
             {
                 Console.WriteLine($"shared outstanding of {symboleName} is significantly different from averageDailyVolume3Month");
-                return false;
+                //it was true
+                return true;
             }
 
             bool isTrailingAnnualDividendRateBigEnough = yahooRequestService
@@ -39,7 +40,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
             if (!isTrailingAnnualDividendRateBigEnough)
             {
                 Console.WriteLine($"The trailingAnnualDividendRate for symbol {symboleName} amount: {trailingAnnualDividendRate} is less than 3");
-                return false;
+                //it was true
+                return true;
             }
 
             return true;
