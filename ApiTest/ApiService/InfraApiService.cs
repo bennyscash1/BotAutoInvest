@@ -28,8 +28,14 @@ namespace InvesAuto.ApiTest.ApiService
         public string sharesOutstanding = "";
         public string averageDailyVolume3Month = "";
         public string trailingAnnualDividendRate = "";
-        public string futurePrice = "";
-        public string label = "";
+     //   public string futurePrice = "";
+        public string HistoryVolume = "";
+        public string VolumeWeightedAvgPrice = "";
+        public string Open = "";
+        public string Close = "";
+        public string High = "";
+        public string Low = "";
+        public string NumberOfTransactions = "";
 
         //public async Task <int>Get
         public async Task<string> GetNewsInformationXmlBySymbol(string symbol)

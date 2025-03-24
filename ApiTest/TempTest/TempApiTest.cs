@@ -1,4 +1,5 @@
 ﻿using InvesAuto.ApiTest.ApiService;
+using InvesAuto.ApiTest.PolygonApi;
 using InvesAuto.Infra.AiIntegrationService;
 using InvesAuto.Infra.DbService;
 using Newtonsoft.Json;
@@ -17,12 +18,15 @@ namespace InvesAuto.ApiTest.TempTest
     public class TempApiTest :InfraApiService
     {
         [Test]
-        public async Task TestAIResponce()
+        public async Task _TestAIResponce()
         {
-
+            PolygonApiServices polygonApiServices = new PolygonApiServices();
+            string symbol = "LMND";
+            string rsiPoygonData = await polygonApiServices.GetRsiPolygonData(symbol);
+            var lastHistorySymbolData = await polygonApiServices.GetLastHistorySymbolData(symbol);
             #region check the  share outstandig and average daily volume
             YahooRequestService yahooRequestService = new YahooRequestService();
-            StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync("ANF");
+            StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync(symbol);
             if (result != null)
             {
                 // Example of using individual properties
@@ -39,6 +43,15 @@ namespace InvesAuto.ApiTest.TempTest
                 sharesOutstanding = result.SharesOutstanding;
                 averageDailyVolume3Month = result.AverageDailyVolume3Month;
                 trailingAnnualDividendRate = result.TrailingAnnualDividendRate;
+                rsi = rsiPoygonData;
+                //History from polygon
+                HistoryVolume = lastHistorySymbolData.Volume;
+                VolumeWeightedAvgPrice = lastHistorySymbolData.VolumeWeightedAvgPrice;
+                Open = lastHistorySymbolData.Open;
+                Close = lastHistorySymbolData.Close;
+                High = lastHistorySymbolData.High;
+                Low = lastHistorySymbolData.Low;
+                NumberOfTransactions = lastHistorySymbolData.NumberOfTransactions;
 
                 bool isSharesOutstandingDiffFromaverageDailyVolume3Month = yahooRequestService
                     .isSharesOutstandingDiffFromaverageDailyVolume3Month(sharesOutstanding, averageDailyVolume3Month);

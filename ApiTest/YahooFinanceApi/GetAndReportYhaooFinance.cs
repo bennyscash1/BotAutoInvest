@@ -1,6 +1,7 @@
 ﻿using InvesAuto.ApiTest.ApiService;
 using InvesAuto.ApiTest.FinvizApi;
 using InvesAuto.ApiTest.LaphaVantageApi;
+using InvesAuto.ApiTest.PolygonApi;
 using InvesAuto.Infra.DbService;
 using NUnit.Framework;
 using static InvesAuto.Infra.BaseTest.EnumServiceList;
@@ -30,6 +31,8 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
                 companyNameFromDB = symbolList[runingAttamp];
                 StockSymbolDataDto result = await YahooRequestService.GetStockDataAsync(companyNameFromDB);
+                PolygonApiServices polygonApiServices = new PolygonApiServices();
+                var lastHistorySymbolData = await polygonApiServices.GetLastHistorySymbolData(companyNameFromDB);
                 // Initialize variables as empty strings
                 if (result != null)
                 {
@@ -47,10 +50,19 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
                     sharesOutstanding = result.SharesOutstanding;
                     averageDailyVolume3Month = result.AverageDailyVolume3Month;
                     trailingAnnualDividendRate = result.TrailingAnnualDividendRate;
-                    futurePrice = result.FuturePrice;
-                    label = result.Label;
+
+                    rsi = await polygonApiServices.GetRsiPolygonData(companyNameFromDB);
+
+                    //Polygon history data
+                    HistoryVolume = lastHistorySymbolData.Volume;
+                    VolumeWeightedAvgPrice = lastHistorySymbolData.VolumeWeightedAvgPrice;
+                    Open = lastHistorySymbolData.Open;
+                    Close = lastHistorySymbolData.Close;
+                    High = lastHistorySymbolData.High;
+                    Low = lastHistorySymbolData.Low;
+                    NumberOfTransactions = lastHistorySymbolData.NumberOfTransactions;
+
                     //FinvizApiService finvizApiService = new FinvizApiService();
-                    rsi = await FinvizApiService.GetRsiFromFinviz(companyNameFromDB);
                     if (!string.IsNullOrEmpty(price))
                     {
                         bool isSymbolLargeStock = YahooRequestService
@@ -62,23 +74,30 @@ namespace InvesAuto.ApiTest.YahooFinanceApi
 
                             #region Report the responce data     
                             DicteneryInfraService dicteneryInfraService = new DicteneryInfraService();
-                            Dictionary<string, string> reportDataService = await dicteneryInfraService.ReturnStockDataDictionary(
-                                 companyNameFromDB,
-                                 price,
-                                 volume,
-                                 eps,
-                                 movingAvg50,
-                                 movingAvg200,
-                                 high52Week,
-                                 low52Week,
-                                 rsi,
-                                 marketTime,
-                                 marketCap,
-                                 sharesOutstanding,
-                                 averageDailyVolume3Month,
-                                 trailingAnnualDividendRate,
-                                 futurePrice,
-                                 label
+                            Dictionary<string, string> reportDataService = await dicteneryInfraService
+                                .ReturnStockDataDictionary(
+                                     companyNameFromDB,
+                                     price,
+                                     volume,
+                                     eps,
+                                     movingAvg50,
+                                     movingAvg200,
+                                     high52Week,
+                                     low52Week,
+                                     rsi,
+                                     marketTime,
+                                     marketCap,
+                                     sharesOutstanding,
+                                     averageDailyVolume3Month,
+                                     trailingAnnualDividendRate,
+                                     HistoryVolume,
+                                     VolumeWeightedAvgPrice,
+                                     Open,
+                                     Close,
+                                     High,
+                                     Low,
+                                     NumberOfTransactions
+
                              );
                             //Add it to the mongo db
                             await mongoDbService.InsertOrUpdateDicteneryDataToMongo(companyNameFromDB, reportDataService,

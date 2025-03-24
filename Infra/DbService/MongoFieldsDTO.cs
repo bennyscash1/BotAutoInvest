@@ -22,10 +22,16 @@ namespace InvesAuto.Infra.DbService
         public string SharesOutstanding { get; set; }
         public string AverageDailyVolume3Month { get; set; }
         public string TrailingAnnualDividendRate { get; set; }
-        public string FuturePrice { get; set; }
-        public string Label { get; set; }
 
-
-
+    }
+    public class StockSymbolHistoryData
+    {
+        public string Volume { get; set; }        // "v"
+        public string VolumeWeightedAvgPrice { get; set; } // "vw"
+        public string Open { get; set; }          // "o"
+        public string Close { get; set; }         // "c"
+        public string High { get; set; }          // "h"
+        public string Low { get; set; }           // "l"
+        public string NumberOfTransactions { get; set; } // "n"
     }
 }
