@@ -18,6 +18,7 @@ namespace InvesAuto.ApiTest.PolygonApi
   
         public async Task<StockSymbolHistoryData> GetLastHistorySymbolData(string symbolName)
         {
+            Console.WriteLine($"Get history for polygon {symbolName}");
             string polygonToken = "ppKPWMUXFqo09isu17qfPQgc8ZrJ8dDy";
 
             string todayDate = DateTime.Today.ToString("yyyy-MM-dd");
@@ -48,6 +49,7 @@ namespace InvesAuto.ApiTest.PolygonApi
         }
         public async Task<string> GetRsiPolygonData(string symbolName)
         {
+            Console.WriteLine($"Get Rsi data for polygon {symbolName}");
             string polygonToken = "ppKPWMUXFqo09isu17qfPQgc8ZrJ8dDy";
             string rsiUrl = $"https://api.polygon.io/v1/indicators/rsi/{symbolName}?timespan=day&apiKey={polygonToken}";
             SetUpBaseUrl(rsiUrl);
